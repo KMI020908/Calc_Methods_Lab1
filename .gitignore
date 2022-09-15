@@ -1,0 +1,11 @@
+# Вывод данных
+Tests/**
+GaussSolutions/**
+QRSolutions/**
+
+# Константы
+/filePath.h
+
+# Системные файлы
+.vscode/**
+.exe
