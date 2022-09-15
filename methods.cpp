@@ -1,5 +1,6 @@
 #include<vector>
 #include<cmath>
+#include<limits>
 #include"ioData.h"
 
 
@@ -15,11 +16,6 @@ SOLUTION_FLAG gaussMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Ty
                 mainRow = i;
             }
         }
-        if (mainValue == 0){ // detA = 0
-            std::vector<Type> solution(0, 0);
-            writeData(solution, OUT_FILE_PATH, NO_SOLUTION);
-            return NO_SOLUTION;
-        } 
         if (mainValue != lCoefs[k][k]){ //Замена строк
             Type temp;
             for (size_t i = 0; i < dimMatrix; i++){
@@ -38,6 +34,12 @@ SOLUTION_FLAG gaussMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Ty
                 lCoefs[i][j] = lCoefs[i][j] - C*lCoefs[k][j];
             }  
         }
+        if (abs(mainValue) < std::numeric_limits<Type>::epsilon()){ // detA = 0
+            std::vector<Type> solution(0, 0);
+            writeData(solution, OUT_FILE_PATH, NO_SOLUTION);
+            return NO_SOLUTION;
+        } 
+        
     }
     std::vector<Type> solution(dimMatrix); // Обратный ход Гаусса
     for (int i = dimMatrix - 1; i >= 0 ; i--){
