@@ -4,6 +4,7 @@
 #include<fstream> 
 #include<iomanip> 
 #include<vector>
+#include"PRNG.h"
 
 enum SOLUTION_FLAG{
     HAS_SOLUTION,   // 0
@@ -14,6 +15,23 @@ enum FILE_FLAG{
     NOT_OPEN, // 0
     IS_CLOSED // 1
 };
+
+template<typename Type>
+FILE_FLAG generateRandomTest(size_t equationDim, Type minValue, Type maxValue, const std::string& FILE_PATH){
+    std::ofstream file;
+    file.open(FILE_PATH);
+    if (!file.is_open())
+        exit(NOT_OPEN);
+    file << equationDim << '\n';
+    PRNG generator;
+    for (size_t i = 0; i < equationDim; i++){
+        for (size_t j = 0; j < equationDim + 1; j++)
+            file << getRandomNumber(generator, minValue, maxValue) << '\t';
+        file << '\n';
+    }
+    file.close();
+    return IS_CLOSED;
+}
 
 template<typename Type>
 FILE_FLAG readData(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs,  const std::string& IN_FILE_PATH) {
