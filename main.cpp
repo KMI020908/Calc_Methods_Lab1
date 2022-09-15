@@ -13,10 +13,11 @@ const std::string G_OUT_FILE_PATH, const std::string QR_OUT_FILE_PATH){
     qrMethod<Type>(lCoefSys, rCoefSys, QR_OUT_FILE_PATH);
 }
 
-int main(){
+template<typename Type>
+void temp_main(){
 
-    std::vector<std::vector<double>> lCoefSys; // Матрица левых коэффициентов
-    std::vector<double> rCoefSys; // Вектор правых коэффициентов
+    std::vector<std::vector<Type>> lCoefSys; // Матрица левых коэффициентов
+    std::vector<Type> rCoefSys; // Вектор правых коэффициентов
 
     checkTest(lCoefSys, rCoefSys, IN_FILE_PATH_1, G_OUT_FILE_PATH_1, QR_OUT_FILE_PATH_1);
 
@@ -28,8 +29,13 @@ int main(){
 
     checkTest(lCoefSys, rCoefSys, IN_FILE_PATH_5, G_OUT_FILE_PATH_5, QR_OUT_FILE_PATH_5);
 
-    generateRandomTest<double>(4, 1.0, 20.0, IN_FILE_PATH_6);
+    generateRandomTest<Type>(4, 1.0, 20.0, IN_FILE_PATH_6);
     checkTest(lCoefSys, rCoefSys, IN_FILE_PATH_6, G_OUT_FILE_PATH_6, QR_OUT_FILE_PATH_6);
+}
+
+int main(){
+
+    temp_main<double>();
 
     return 0;
 }
