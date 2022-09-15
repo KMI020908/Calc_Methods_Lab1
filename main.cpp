@@ -13,8 +13,7 @@ const std::string G_OUT_FILE_PATH, const std::string QR_OUT_FILE_PATH){
     qrMethod<Type>(lCoefSys, rCoefSys, QR_OUT_FILE_PATH);
 }
 
-int main()
-{
+int main(){
 
     std::vector<std::vector<double>> lCoefSys; // Матрица левых коэффициентов
     std::vector<double> rCoefSys; // Вектор правых коэффициентов
