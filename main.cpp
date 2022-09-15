@@ -28,6 +28,7 @@ int main(){
 
     checkTest(lCoefSys, rCoefSys, IN_FILE_PATH_5, G_OUT_FILE_PATH_5, QR_OUT_FILE_PATH_5);
 
+    generateRandomTest<double>(4, 1.0, 20.0, IN_FILE_PATH_6);
     checkTest(lCoefSys, rCoefSys, IN_FILE_PATH_6, G_OUT_FILE_PATH_6, QR_OUT_FILE_PATH_6);
 
     return 0;
