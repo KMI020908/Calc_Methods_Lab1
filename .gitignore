@@ -8,4 +8,4 @@ QRSolutions/**
 
 # Системные файлы
 .vscode/**
- /main.exe
+ *.exe
