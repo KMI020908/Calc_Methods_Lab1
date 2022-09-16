@@ -8,6 +8,8 @@
 template<typename Type>
 SOLUTION_FLAG gaussMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, const std::string &OUT_FILE_PATH){
     size_t dimMatrix = lCoefs.size(); // Размерность СЛАУ
+    std::vector<std::vector<Type>> A = lCoefs; // Левая матрица до преобразований
+    std::vector<Type> b = rCoefs; // Правая матрица после преобразований
     for (size_t k = 0; k < dimMatrix; k++){ // Прямой ход Гаусса
         Type mainValue = lCoefs[k][k];    // Главный элемент
         size_t mainRow = k; // Строка главного элемента
@@ -49,7 +51,28 @@ SOLUTION_FLAG gaussMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Ty
         }
         solution[i] = (rCoefs[i] - sum)/lCoefs[i][i];
     }
+
+    // Нахождение невязки (discrepancy)
+    std::vector<Type> b1(dimMatrix); // Правая часть после подстановки полученного решения
+    for (size_t i = 0; i < dimMatrix; i++){
+            Type sum = 0.0;
+            for (size_t k = 0; k < dimMatrix; k++){
+                sum += A[i][k] * solution[k];
+            }
+            b1[i] = sum;
+    }
+    std::vector<Type> discrepancyVector(dimMatrix); // Вектор невязки
+    for (size_t i = 0; i < dimMatrix; i++){
+        discrepancyVector[i] = b[i] - b1[i];
+    }
+    Type discrepancy = 0.0;
+    for (size_t i = 0; i < dimMatrix; i++){
+        discrepancy += discrepancyVector[i] * discrepancyVector[i];     
+    }
+    discrepancy = sqrt(discrepancy); // Невязка
+
     writeData(solution, OUT_FILE_PATH);
+    writeDiscrepancy(discrepancyVector, discrepancy, OUT_FILE_PATH);
     return HAS_SOLUTION;
 }
 
@@ -57,6 +80,7 @@ template<typename Type>
 SOLUTION_FLAG qrMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, const std::string &OUT_FILE_PATH){
 size_t dimMatrix = lCoefs.size(); // Размерность СЛАУ
 std::vector<std::vector<Type>> A = lCoefs;
+std::vector<Type> b = rCoefs;
 for (size_t k = 0; k < dimMatrix; k++){
     Type mainValue = lCoefs[k][k];    // Главный элемент
     size_t mainRow = k; // Строка главного элемента
@@ -107,7 +131,7 @@ for (size_t i = 0; i < dimMatrix; i++){
 }
 for (size_t i = 0; i < dimMatrix; i++){
     for (size_t j = i + 1; j < dimMatrix; j++){
-        Type sum = 0;
+        Type sum = 0.0;
         for (size_t k = 0; k < j; k++){
             sum += R_rev[i][k] * lCoefs[k][j];
         }
@@ -120,7 +144,7 @@ for (size_t i = 0; i < dimMatrix; i++){
 }
 for (size_t i = 0; i < dimMatrix; i++){
     for (size_t j = 0; j < dimMatrix; j++){
-        Type sum = 0;
+        Type sum = 0.0;
         for (size_t k = 0; k < dimMatrix; k++){
             sum += A[i][k] * R_rev[k][j];
         }
@@ -135,7 +159,27 @@ for (int i = dimMatrix - 1; i >= 0 ; i--){
         }
         solution[i] = (rCoefs[i] - sum)/lCoefs[i][i];
     }
+// Нахождение невязки (discrepancy)
+    std::vector<Type> b1(dimMatrix); // Правая часть после подстановки полученного решения
+    for (size_t i = 0; i < dimMatrix; i++){
+            Type sum = 0.0;
+            for (size_t k = 0; k < dimMatrix; k++){
+                sum += A[i][k] * solution[k];
+            }
+            b1[i] = sum;
+    }
+    std::vector<Type> discrepancyVector(dimMatrix); // Вектор невязки
+    for (size_t i = 0; i < dimMatrix; i++){
+        discrepancyVector[i] = b[i] - b1[i];
+    }
+    Type discrepancy = 0.0;
+    for (size_t i = 0; i < dimMatrix; i++){
+        discrepancy += discrepancyVector[i] * discrepancyVector[i];     
+    }
+    discrepancy = sqrt(discrepancy); // Невязка
+
     writeData(solution, OUT_FILE_PATH);
+    writeDiscrepancy(discrepancyVector, discrepancy, OUT_FILE_PATH);
     writeQRMatrix(Q, lCoefs, OUT_FILE_PATH);
     return HAS_SOLUTION;
 

@@ -68,7 +68,7 @@ FILE_FLAG writeData(const std::vector<Type> &solution, const std::string& OUT_FI
 		exit(NOT_OPEN);
     if (FLAG == NO_SOLUTION){
         file << "The solution:" << '\n';
-	    file << "Нет решений.";
+	    file << "No solution.";
         file.close();
         return IS_CLOSED;
     }
@@ -90,7 +90,7 @@ FILE_FLAG writeQRMatrix(const std::vector<std::vector<Type>> &Q, const std::vect
 		exit(NOT_OPEN);
     size_t dimMatrix = Q.size(); 
     file << '\n' << '\n';
-    file << "Матрица Q:" << '\n';
+    file << "Q matrix:" << '\n';
     for (size_t i = 0; i < dimMatrix; i++){
         for (size_t j = 0; j < dimMatrix; j++){
             file << Q[i][j] << '\t';    
@@ -98,7 +98,7 @@ FILE_FLAG writeQRMatrix(const std::vector<std::vector<Type>> &Q, const std::vect
         file << '\n';
     }
     file << '\n';
-    file << "Матрица R:" << '\n';
+    file << "R matrix:" << '\n';
     for (size_t i = 0; i < dimMatrix; i++){
         for (size_t j = 0; j < dimMatrix; j++){
             file << R[i][j] << '\t';    
@@ -108,5 +108,25 @@ FILE_FLAG writeQRMatrix(const std::vector<std::vector<Type>> &Q, const std::vect
 	file.close();
 	return IS_CLOSED;
 }
+
+template<typename Type>
+FILE_FLAG writeDiscrepancy(const std::vector<Type> &discrepancyVec, Type discrepancy, const std::string& OUT_FILE_PATH){
+	std::ofstream file;
+	file.open(OUT_FILE_PATH, std::ios::app);
+	if (!file.is_open())
+		exit(NOT_OPEN); 
+    file << '\n' << '\n';
+    file << "Discrepancy vector:" << '\n';
+    file << "b - b1 = " << "{ ";
+    for (size_t i = 0; i < discrepancyVec.size() - 1; i++)
+        file << discrepancyVec[i] << ", ";
+    file << discrepancyVec[discrepancyVec.size() - 1] << ' ';
+    file << '}';
+    file << '\n' <<'\n';
+    file << "Discrepancy = " << discrepancy;
+	file.close();
+	return IS_CLOSED;
+}
+
 
 #endif
