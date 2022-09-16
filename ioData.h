@@ -152,5 +152,24 @@ FILE_FLAG addDisturbance(const std::vector<Type> &solution, const std::string& O
 	return IS_CLOSED;
 }
 
+template<typename Type>
+FILE_FLAG writeConds(Type cond_1, Type cond_inf, const std::string& OUT_FILE_PATH, SOLUTION_FLAG FLAG = HAS_SOLUTION){
+    std::ofstream file;
+	file.open(OUT_FILE_PATH, std::ios::app);
+	if (!file.is_open())
+		exit(NOT_OPEN);
+    if (FLAG == NO_SOLUTION){
+        file << '\n' << '\n';
+        file << "cond A = inf";
+        return IS_CLOSED;
+    }
+    file << '\n' << '\n';
+    file << "cond_1 A = " << cond_1;
+    file << '\n' << '\n';
+    file << "cond_inf A = " << cond_inf;
+    file.close();
+    return IS_CLOSED;
+} 
+
 
 #endif
