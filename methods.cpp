@@ -2,6 +2,7 @@
 #include<cmath>
 #include<limits>
 #include"ioData.h"
+#include<iostream>
 
 
 template<typename Type>
@@ -39,13 +40,12 @@ SOLUTION_FLAG gaussMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Ty
             writeData(solution, OUT_FILE_PATH, NO_SOLUTION);
             return NO_SOLUTION;
         } 
-        
     }
     std::vector<Type> solution(dimMatrix); // Обратный ход Гаусса
     for (int i = dimMatrix - 1; i >= 0 ; i--){
         Type sum = 0.0;
         for (size_t j = i + 1; j < dimMatrix; j++){
-            sum = sum + lCoefs[i][j] * solution[j]; 
+            sum += lCoefs[i][j] * solution[j]; 
         }
         solution[i] = (rCoefs[i] - sum)/lCoefs[i][i];
     }
@@ -56,6 +56,7 @@ SOLUTION_FLAG gaussMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Ty
 template<typename Type>
 SOLUTION_FLAG qrMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, const std::string &OUT_FILE_PATH){
 size_t dimMatrix = lCoefs.size(); // Размерность СЛАУ
+std::vector<std::vector<Type>> A = lCoefs;
 for (size_t k = 0; k < dimMatrix; k++){
     Type mainValue = lCoefs[k][k];    // Главный элемент
     size_t mainRow = k; // Строка главного элемента
@@ -96,15 +97,46 @@ for (size_t k = 0; k < dimMatrix; k++){
         rCoefs[i] = -s*temp + c*rCoefs[i];
     }
 }
+// Нахождение Q матрицы
+std::vector<std::vector<Type>> R_rev(dimMatrix); // обратная к R матрица
+for (size_t i = 0; i < dimMatrix; i++){
+    R_rev[i].resize(dimMatrix);
+}
+for (size_t i = 0; i < dimMatrix; i++){
+    R_rev[i][i] = 1/lCoefs[i][i];
+}
+for (size_t i = 0; i < dimMatrix; i++){
+    for (size_t j = i + 1; j < dimMatrix; j++){
+        Type sum = 0;
+        for (size_t k = 0; k < j; k++){
+            sum += R_rev[i][k] * lCoefs[k][j];
+        }
+        R_rev[i][j] = -R_rev[j][j]*sum;
+    } 
+}
+std::vector<std::vector<Type>> Q(dimMatrix); // Искомая матрица Q
+for (size_t i = 0; i < dimMatrix; i++){
+    Q[i].resize(dimMatrix);
+}
+for (size_t i = 0; i < dimMatrix; i++){
+    for (size_t j = 0; j < dimMatrix; j++){
+        Type sum = 0;
+        for (size_t k = 0; k < dimMatrix; k++){
+            sum += A[i][k] * R_rev[k][j];
+        }
+        Q[i][j] = sum;
+    } 
+}
 std::vector<Type> solution(dimMatrix); // Обратный ход Гаусса
 for (int i = dimMatrix - 1; i >= 0 ; i--){
     Type sum = 0.0;
     for (size_t j = i + 1; j < dimMatrix; j++){
-         sum = sum + lCoefs[i][j] * solution[j]; 
+         sum += lCoefs[i][j] * solution[j]; 
         }
         solution[i] = (rCoefs[i] - sum)/lCoefs[i][i];
     }
     writeData(solution, OUT_FILE_PATH);
+    writeQRMatrix(Q, lCoefs, OUT_FILE_PATH);
     return HAS_SOLUTION;
 
 return HAS_SOLUTION;

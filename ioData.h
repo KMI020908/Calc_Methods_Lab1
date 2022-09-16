@@ -82,4 +82,31 @@ FILE_FLAG writeData(const std::vector<Type> &solution, const std::string& OUT_FI
 	return IS_CLOSED;
 }
 
+template<typename Type>
+FILE_FLAG writeQRMatrix(const std::vector<std::vector<Type>> &Q, const std::vector<std::vector<Type>> &R, const std::string& OUT_FILE_PATH){
+	std::ofstream file;
+	file.open(OUT_FILE_PATH, std::ios::app);
+	if (!file.is_open())
+		exit(NOT_OPEN);
+    size_t dimMatrix = Q.size(); 
+    file << '\n' << '\n';
+    file << "Матрица Q:" << '\n';
+    for (size_t i = 0; i < dimMatrix; i++){
+        for (size_t j = 0; j < dimMatrix; j++){
+            file << Q[i][j] << '\t';    
+        }
+        file << '\n';
+    }
+    file << '\n';
+    file << "Матрица R:" << '\n';
+    for (size_t i = 0; i < dimMatrix; i++){
+        for (size_t j = 0; j < dimMatrix; j++){
+            file << R[i][j] << '\t';    
+        }
+        file << '\n';
+    }
+	file.close();
+	return IS_CLOSED;
+}
+
 #endif
