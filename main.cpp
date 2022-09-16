@@ -9,8 +9,10 @@ void checkTest(std::vector<std::vector<Type>> &lCoefSys, std::vector<Type> &rCoe
 const std::string &G_OUT_FILE_PATH, const std::string &QR_OUT_FILE_PATH){
     readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
     gaussMethod<Type>(lCoefSys, rCoefSys, G_OUT_FILE_PATH);
+    gaussMethod<Type>(lCoefSys, rCoefSys, G_OUT_FILE_PATH, 1e-2);
     readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
     qrMethod<Type>(lCoefSys, rCoefSys, QR_OUT_FILE_PATH);
+    qrMethod<Type>(lCoefSys, rCoefSys, QR_OUT_FILE_PATH, 1e-2);
 }
 
 template<typename Type>

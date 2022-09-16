@@ -128,5 +128,29 @@ FILE_FLAG writeDiscrepancy(const std::vector<Type> &discrepancyVec, Type discrep
 	return IS_CLOSED;
 }
 
+template<typename Type>
+FILE_FLAG addDisturbance(const std::vector<Type> &solution, const std::string& OUT_FILE_PATH, Type disturbance, SOLUTION_FLAG FLAG = HAS_SOLUTION){
+	std::ofstream file;
+	file.open(OUT_FILE_PATH, std::ios::app);
+	if (!file.is_open())
+		exit(NOT_OPEN);
+    if (FLAG == NO_SOLUTION){
+        file << '\n' << '\n';
+        file << "The solution:" << '\n';
+	    file << "No solution.";
+        file.close();
+        return IS_CLOSED;
+    }
+    file << '\n' << '\n';
+    file << "The solution after disturbance = " << disturbance << '\n';
+	file << "X1 = " << "{ ";
+    for (size_t i = 0; i < solution.size() - 1; i++)
+        file << solution[i] << ", ";
+    file << solution[solution.size() - 1] << ' ';
+    file << '}';
+	file.close();
+	return IS_CLOSED;
+}
+
 
 #endif
