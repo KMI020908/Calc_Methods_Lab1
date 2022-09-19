@@ -79,9 +79,11 @@ const std::string &OUT_FILE_PATH, Type disturbance){
         // Вывод данных
         if(OUT_FILE_PATH != "empty"){
             writeData(solution, OUT_FILE_PATH);
-            Type cond_1 = findCond_1(A);
-            Type cond_inf = findCond_inf(A);
+            std::vector<std::vector<Type>> B; // Обратная к A матрица
+            Type cond_1 = findCond_1(A, B);
+            Type cond_inf = findCond_inf(A, B);
             writeConds(cond_1, cond_inf, OUT_FILE_PATH);
+            writeMatrixMultiply(B, A, OUT_FILE_PATH);
             writeDiscrepancy(discrepancyVector, discrepancy, OUT_FILE_PATH);
         }
     }
@@ -210,9 +212,11 @@ const std::string &OUT_FILE_PATH, Type disturbance){
         // Вывод данных
         if (OUT_FILE_PATH != "empty"){
             writeData(solution, OUT_FILE_PATH);
-            Type cond_1 = findCond_1(A);
-            Type cond_inf = findCond_inf(A);
+            std::vector<std::vector<Type>> B; // Обратная к A матрица
+            Type cond_1 = findCond_1(A, B);
+            Type cond_inf = findCond_inf(A, B);
             writeConds(cond_1, cond_inf, OUT_FILE_PATH);
+            writeMatrixMultiply(B, A, OUT_FILE_PATH);
             writeDiscrepancy(discrepancyVector, discrepancy, OUT_FILE_PATH);
             writeQRMatrix(Q, lCoefs, OUT_FILE_PATH); 
         }
@@ -228,9 +232,9 @@ const std::string &OUT_FILE_PATH, Type disturbance){
 
 // Нахождение числа обусловности для октаэдрической нормы
 template<typename Type>
-Type findCond_1(const std::vector<std::vector<Type>> &A){
+Type findCond_1(const std::vector<std::vector<Type>> &A, std::vector<std::vector<Type>> &B){
     size_t dimMatrix = A.size();
-    std::vector<std::vector<Type>> B(dimMatrix); //Обратная к A матрица
+    B.resize(dimMatrix); //Обратная к A матрица
     std::vector<std::vector<Type>> E(dimMatrix);
     for (size_t i = 0; i < dimMatrix; i++){
         E[i].resize(dimMatrix);
@@ -278,9 +282,9 @@ Type findCond_1(const std::vector<std::vector<Type>> &A){
 
 // Нахождение числа обусловности для кубической нормы
 template<typename Type>
-Type findCond_inf(const std::vector<std::vector<Type>> &A){
+Type findCond_inf(const std::vector<std::vector<Type>> &A, std::vector<std::vector<Type>> &B){
     size_t dimMatrix = A.size();
-    std::vector<std::vector<Type>> B(dimMatrix); //Обратная к A матрица
+    B.resize(dimMatrix); //Обратная к A матрица
     std::vector<std::vector<Type>> E(dimMatrix);
     for (size_t i = 0; i < dimMatrix; i++){
         E[i].resize(dimMatrix);

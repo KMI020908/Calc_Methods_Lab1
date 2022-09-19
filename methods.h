@@ -16,10 +16,10 @@ SOLUTION_FLAG qrMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Type>
 const std::string &OUT_FILE_PATH = "empty", Type disturbance = 0.0);
 
 template<typename Type>
-Type findCond_1(const std::vector<std::vector<Type>> &A);
+Type findCond_1(const std::vector<std::vector<Type>> &A, std::vector<std::vector<Type>> &B);
 
 template<typename Type>
-Type findCond_inf(const std::vector<std::vector<Type>> &A);
+Type findCond_inf(const std::vector<std::vector<Type>> &A, std::vector<std::vector<Type>> &B);
 
 
 #endif

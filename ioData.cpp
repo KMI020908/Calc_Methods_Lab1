@@ -94,6 +94,29 @@ FILE_FLAG writeQRMatrix(const std::vector<std::vector<Type>> &Q, const std::vect
 }
 
 template<typename Type>
+FILE_FLAG writeMatrixMultiply(const std::vector<std::vector<Type>> &B, const std::vector<std::vector<Type>> &A, const std::string& OUT_FILE_PATH){
+    std::ofstream file;
+	file.open(OUT_FILE_PATH, std::ios::app);
+	if (!file.is_open())
+		exit(NOT_OPEN);
+    size_t dimMatrix = A.size();
+    file << '\n' << '\n';
+    file << "Умножение обратной матрицы на исходную:" << '\n';
+    for (size_t i = 0; i < dimMatrix; i++){
+        for (size_t j = 0; j < dimMatrix; j++){
+            Type sum = 0;
+            for (size_t k = 0; k < dimMatrix; k++){
+                sum += B[i][k]*A[k][j];
+            }
+            file << sum << '\t';
+        }
+        file << '\n';
+    }
+    file.close();
+    return IS_CLOSED;
+} 
+
+template<typename Type>
 FILE_FLAG writeDiscrepancy(const std::vector<Type> &discrepancyVec, Type discrepancy, const std::string& OUT_FILE_PATH){
 	std::ofstream file;
 	file.open(OUT_FILE_PATH, std::ios::app);
