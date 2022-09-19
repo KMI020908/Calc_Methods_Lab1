@@ -1,6 +1,6 @@
 #include<vector>
-#include"ioData.h"
 #include"methods.cpp"
+#include"ioData.cpp"
 #include"filePath.h"
 
 // Процедура проверки алгоритмов

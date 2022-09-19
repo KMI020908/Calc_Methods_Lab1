@@ -1,19 +1,8 @@
-#include<vector>
-#include<cmath>
-#include<limits>
-#include"ioData.h"
-#include<iostream>
-
-template<typename Type>
-Type findCond_1(const std::vector<std::vector<Type>> &A);
-
-template<typename Type>
-Type findCond_inf(const std::vector<std::vector<Type>> &A);
-
+#include "methods.h"
 
 template<typename Type>
 SOLUTION_FLAG gaussMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, std::vector<Type> &solution,
-const std::string &OUT_FILE_PATH = "empty", Type disturbance = 0.0){
+const std::string &OUT_FILE_PATH, Type disturbance){
     size_t dimMatrix = lCoefs.size(); // Размерность СЛАУ
     solution.resize(dimMatrix);
     if (disturbance >= std::numeric_limits<Type>::epsilon()){
@@ -21,8 +10,8 @@ const std::string &OUT_FILE_PATH = "empty", Type disturbance = 0.0){
             rCoefs[i] += disturbance; 
         }
     }
-    std::vector<std::vector<Type>> A = lCoefs; // Левая матрица до преобразований
-    std::vector<Type> b = rCoefs; // Правая матрица после преобразований
+    const std::vector<std::vector<Type>> A = lCoefs; // Левая матрица до преобразований
+    const std::vector<Type> b = rCoefs; // Правая матрица после преобразований
     for (size_t k = 0; k < dimMatrix; k++){ // Прямой ход Гаусса
         Type mainValue = lCoefs[k][k];    // Главный элемент
         size_t mainRow = k; // Строка главного элемента
@@ -52,8 +41,12 @@ const std::string &OUT_FILE_PATH = "empty", Type disturbance = 0.0){
         }
         if (abs(mainValue) < std::numeric_limits<Type>::epsilon()){ // detA = 0
             std::vector<Type> solution(0, 0);
-            if (OUT_FILE_PATH != "empty")
+            if (OUT_FILE_PATH != "empty"){
                 writeData(solution, OUT_FILE_PATH, NO_SOLUTION);
+                Type cond_1 = 0;
+                Type cond_inf = 0;
+                writeConds(cond_1, cond_inf, OUT_FILE_PATH ,NO_SOLUTION);
+            }
             return NO_SOLUTION;
         } 
     }
@@ -86,6 +79,9 @@ const std::string &OUT_FILE_PATH = "empty", Type disturbance = 0.0){
         // Вывод данных
         if(OUT_FILE_PATH != "empty"){
             writeData(solution, OUT_FILE_PATH);
+            Type cond_1 = findCond_1(A);
+            Type cond_inf = findCond_inf(A);
+            writeConds(cond_1, cond_inf, OUT_FILE_PATH);
             writeDiscrepancy(discrepancyVector, discrepancy, OUT_FILE_PATH);
         }
     }
@@ -98,8 +94,8 @@ const std::string &OUT_FILE_PATH = "empty", Type disturbance = 0.0){
 }
 
 template<typename Type>
-qrMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, std::vector<Type> &solution, 
-const std::string &OUT_FILE_PATH = "empty", Type disturbance = 0.0){
+SOLUTION_FLAG qrMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, std::vector<Type> &solution, 
+const std::string &OUT_FILE_PATH, Type disturbance){
     size_t dimMatrix = lCoefs.size(); // Размерность СЛАУ
     solution.resize(dimMatrix);
     if (disturbance >= std::numeric_limits<Type>::epsilon()){
@@ -131,8 +127,12 @@ const std::string &OUT_FILE_PATH = "empty", Type disturbance = 0.0){
         }
         if (abs(mainValue) < std::numeric_limits<Type>::epsilon()){ // detA = 0
                 std::vector<Type> solution(0, 0);
-                if (OUT_FILE_PATH != "empty")
+                if (OUT_FILE_PATH != "empty"){
                     writeData(solution, OUT_FILE_PATH, NO_SOLUTION);
+                    Type cond_1 = 0;
+                    Type cond_inf = 0;
+                    writeConds(cond_1, cond_inf, OUT_FILE_PATH ,NO_SOLUTION);
+                }
                 return NO_SOLUTION;
             } 
         for (size_t i = k + 1; i < dimMatrix; i++){
@@ -210,6 +210,9 @@ const std::string &OUT_FILE_PATH = "empty", Type disturbance = 0.0){
         // Вывод данных
         if (OUT_FILE_PATH != "empty"){
             writeData(solution, OUT_FILE_PATH);
+            Type cond_1 = findCond_1(A);
+            Type cond_inf = findCond_inf(A);
+            writeConds(cond_1, cond_inf, OUT_FILE_PATH);
             writeDiscrepancy(discrepancyVector, discrepancy, OUT_FILE_PATH);
             writeQRMatrix(Q, lCoefs, OUT_FILE_PATH); 
         }
@@ -227,10 +230,12 @@ const std::string &OUT_FILE_PATH = "empty", Type disturbance = 0.0){
 template<typename Type>
 Type findCond_1(const std::vector<std::vector<Type>> &A){
     size_t dimMatrix = A.size();
-    std::vector<std::vector<Type>> B; //Обратная к A матрица
+    std::vector<std::vector<Type>> B(dimMatrix); //Обратная к A матрица
     std::vector<std::vector<Type>> E(dimMatrix);
-    for (size_t i = 0; i < dimMatrix; i++)
+    for (size_t i = 0; i < dimMatrix; i++){
         E[i].resize(dimMatrix);
+        B[i].resize(dimMatrix);
+    }
     for (size_t i = 0; i < dimMatrix; i++){
         for (size_t j = 0; j < dimMatrix; j++){
             if (i == j)
@@ -244,7 +249,8 @@ Type findCond_1(const std::vector<std::vector<Type>> &A){
     for (size_t i = 0; i < dimMatrix; i++){
         tempMatrix = A;
         gaussMethod<Type>(tempMatrix, E[i], solution);
-        B.push_back(solution);
+        for (size_t j = 0; j < dimMatrix; j++)
+            B[j][i] = solution[j];
     }
     Type infNormOfA = 0.0;
     Type infNormOfB = 0.0;
@@ -274,10 +280,12 @@ Type findCond_1(const std::vector<std::vector<Type>> &A){
 template<typename Type>
 Type findCond_inf(const std::vector<std::vector<Type>> &A){
     size_t dimMatrix = A.size();
-    std::vector<std::vector<Type>> B; //Обратная к A матрица
+    std::vector<std::vector<Type>> B(dimMatrix); //Обратная к A матрица
     std::vector<std::vector<Type>> E(dimMatrix);
-    for (size_t i = 0; i < dimMatrix; i++)
+    for (size_t i = 0; i < dimMatrix; i++){
         E[i].resize(dimMatrix);
+        B[i].resize(dimMatrix);
+    }
     for (size_t i = 0; i < dimMatrix; i++){
         for (size_t j = 0; j < dimMatrix; j++){
             if (i == j)
@@ -291,15 +299,17 @@ Type findCond_inf(const std::vector<std::vector<Type>> &A){
     for (size_t i = 0; i < dimMatrix; i++){
          tempMatrix = A;
         gaussMethod<Type>(tempMatrix, E[i], solution);
-        B.push_back(solution);
+        for (size_t j = 0; j < dimMatrix; j++)
+            B[j][i] = solution[j];
     }
+    
     Type infNormOfA = 0.0;
     Type infNormOfB = 0.0;
     // Норма A
     for (size_t i = 0; i < dimMatrix; i++){
         Type sum = 0.0;
         for (size_t j = 0; j < dimMatrix; j++){
-            sum += A[i][j];
+            sum += abs(A[i][j]);
         }
         if (sum > infNormOfA)
             infNormOfA = sum;
@@ -308,7 +318,7 @@ Type findCond_inf(const std::vector<std::vector<Type>> &A){
     for (size_t i = 0; i < dimMatrix; i++){
         Type sum = 0.0;
         for (size_t j = 0; j < dimMatrix; j++){
-            sum += B[i][j];
+            sum += abs(B[i][j]);
         }
         if (sum > infNormOfB)
             infNormOfB = sum;
