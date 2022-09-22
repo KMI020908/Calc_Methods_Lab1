@@ -106,17 +106,17 @@ void findQMatrix(std::vector<std::vector<Type>> &lCoefs, std::vector<std::vector
                     Type temp = lCoefs[k][j];
                     lCoefs[k][j] = c*lCoefs[k][j] + s*lCoefs[i][j];
                     lCoefs[i][j] = -s*temp + c*lCoefs[i][j];
+                    if (std::abs(lCoefs[i][j]) < std::numeric_limits<Type>::epsilon())
+                        lCoefs[i][j] = 0;
                 }
             }
         }
     }
     for (std::size_t i = 0; i < dimMatrix; i++){
-        for (std::size_t j = 0; j < dimMatrix; j++){
-            if (i != j){
-                Type temp = Q[i][j];
-                Q[i][j] = Q[j][i];
-                Q[j][i] = temp;
-           }  
+        for (std::size_t j = i + 1; j < dimMatrix; j++){
+            Type temp = Q[i][j];
+            Q[i][j] = Q[j][i];
+            Q[j][i] = temp;
         }
     }
 }
