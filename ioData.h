@@ -24,13 +24,12 @@ template<typename Type>
 FILE_FLAG writeMatrixMultiply(const std::vector<std::vector<Type>> &B, const std::vector<std::vector<Type>> &A, const std::string& OUT_FILE_PATH);
 
 template<typename Type>
-FILE_FLAG writeDiscrepancy(const std::vector<Type> &discrepancyVec, Type discrepancy, const std::string& OUT_FILE_PATH);
+FILE_FLAG writeResidual(Type residual, const std::string& OUT_FILE_PATH);
 
 template<typename Type>
-FILE_FLAG addDisturbance(const std::vector<Type> &solution, const std::string& OUT_FILE_PATH, Type disturbance, SOLUTION_FLAG FLAG = HAS_SOLUTION);
+FILE_FLAG addPerturbation(const std::vector<Type> &solution, const std::string& OUT_FILE_PATH, Type perturbation, SOLUTION_FLAG FLAG = HAS_SOLUTION);
 
 template<typename Type>
 FILE_FLAG writeConds(Type cond_1, Type cond_inf, const std::string& OUT_FILE_PATH, SOLUTION_FLAG FLAG = HAS_SOLUTION);
-
 
 #endif

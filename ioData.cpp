@@ -8,8 +8,8 @@ FILE_FLAG generateRandomTest(size_t equationDim, Type minValue, Type maxValue, c
         exit(NOT_OPEN);
     file << equationDim << '\n';
     PRNG generator;
-    for (size_t i = 0; i < equationDim; i++){
-        for (size_t j = 0; j < equationDim + 1; j++)
+    for (std::size_t i = 0; i < equationDim; i++){
+        for (std::size_t j = 0; j < equationDim + 1; j++)
             file << getRandomNumber(generator, minValue, maxValue) << '\t';
         file << '\n';
     }
@@ -23,15 +23,15 @@ FILE_FLAG readData(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rC
 	file.open(IN_FILE_PATH);
 	if (!file.is_open())
 		exit(NOT_OPEN);
-	size_t n;
+	std::size_t n;
 	file >> n;
     std::vector<Type> hVec;
     hVec.reserve(n);
     Type hValue = 0;
     lCoefs.clear();
     rCoefs.clear();
-    for (size_t i = 0; i < n; i++){
-        for (size_t j = 0; j < n; j++){ 
+    for (std::size_t i = 0; i < n; i++){
+        for (std::size_t j = 0; j < n; j++){ 
             file >> hValue;
             hVec.push_back(hValue);    
         }
@@ -58,7 +58,7 @@ FILE_FLAG writeData(const std::vector<Type> &solution, const std::string& OUT_FI
     }
     file << "The solution:" << '\n';
 	file << "X = " << "{ ";
-    for (size_t i = 0; i < solution.size() - 1; i++)
+    for (std::size_t i = 0; i < solution.size() - 1; i++)
         file << solution[i] << ", ";
     file << solution[solution.size() - 1] << ' ';
     file << '}';
@@ -72,19 +72,19 @@ FILE_FLAG writeQRMatrix(const std::vector<std::vector<Type>> &Q, const std::vect
 	file.open(OUT_FILE_PATH, std::ios::app);
 	if (!file.is_open())
 		exit(NOT_OPEN);
-    size_t dimMatrix = Q.size(); 
+    std::size_t dimMatrix = Q.size(); 
     file << '\n' << '\n';
     file << "Q matrix:" << '\n';
-    for (size_t i = 0; i < dimMatrix; i++){
-        for (size_t j = 0; j < dimMatrix; j++){
+    for (std::size_t i = 0; i < dimMatrix; i++){
+        for (std::size_t j = 0; j < dimMatrix; j++){
             file << Q[i][j] << '\t';    
         }
         file << '\n';
     }
     file << '\n';
     file << "R matrix:" << '\n';
-    for (size_t i = 0; i < dimMatrix; i++){
-        for (size_t j = 0; j < dimMatrix; j++){
+    for (std::size_t i = 0; i < dimMatrix; i++){
+        for (std::size_t j = 0; j < dimMatrix; j++){
             file << R[i][j] << '\t';    
         }
         file << '\n';
@@ -99,13 +99,13 @@ FILE_FLAG writeMatrixMultiply(const std::vector<std::vector<Type>> &B, const std
 	file.open(OUT_FILE_PATH, std::ios::app);
 	if (!file.is_open())
 		exit(NOT_OPEN);
-    size_t dimMatrix = A.size();
+    std::size_t dimMatrix = A.size();
     file << '\n' << '\n';
-    file << "Умножение обратной матрицы на исходную:" << '\n';
-    for (size_t i = 0; i < dimMatrix; i++){
-        for (size_t j = 0; j < dimMatrix; j++){
+    file << "Multiplication of invert A and original A:" << '\n';
+    for (std::size_t i = 0; i < dimMatrix; i++){
+        for (std::size_t j = 0; j < dimMatrix; j++){
             Type sum = 0;
-            for (size_t k = 0; k < dimMatrix; k++){
+            for (std::size_t k = 0; k < dimMatrix; k++){
                 sum += B[i][k]*A[k][j];
             }
             file << sum << '\t';
@@ -117,26 +117,19 @@ FILE_FLAG writeMatrixMultiply(const std::vector<std::vector<Type>> &B, const std
 } 
 
 template<typename Type>
-FILE_FLAG writeDiscrepancy(const std::vector<Type> &discrepancyVec, Type discrepancy, const std::string& OUT_FILE_PATH){
+FILE_FLAG writeResidual(Type residual, const std::string& OUT_FILE_PATH){
 	std::ofstream file;
 	file.open(OUT_FILE_PATH, std::ios::app);
 	if (!file.is_open())
 		exit(NOT_OPEN); 
     file << '\n' << '\n';
-    file << "Discrepancy vector:" << '\n';
-    file << "b - b1 = " << "{ ";
-    for (size_t i = 0; i < discrepancyVec.size() - 1; i++)
-        file << discrepancyVec[i] << ", ";
-    file << discrepancyVec[discrepancyVec.size() - 1] << ' ';
-    file << '}';
-    file << '\n' <<'\n';
-    file << "Discrepancy = " << discrepancy;
+    file << "Residual = " << residual;
 	file.close();
 	return IS_CLOSED;
 }
 
 template<typename Type>
-FILE_FLAG addDisturbance(const std::vector<Type> &solution, const std::string& OUT_FILE_PATH, Type disturbance, SOLUTION_FLAG FLAG){
+FILE_FLAG addPerturbation(const std::vector<Type> &solution, const std::string& OUT_FILE_PATH, Type perturbation, SOLUTION_FLAG FLAG){
 	std::ofstream file;
 	file.open(OUT_FILE_PATH, std::ios::app);
 	if (!file.is_open())
@@ -149,9 +142,9 @@ FILE_FLAG addDisturbance(const std::vector<Type> &solution, const std::string& O
         return IS_CLOSED;
     }
     file << '\n' << '\n';
-    file << "The solution after disturbance = " << disturbance << '\n';
+    file << "The solution after perturbation = " << perturbation << '\n';
 	file << "X1 = " << "{ ";
-    for (size_t i = 0; i < solution.size() - 1; i++)
+    for (std::size_t i = 0; i < solution.size() - 1; i++)
         file << solution[i] << ", ";
     file << solution[solution.size() - 1] << ' ';
     file << '}';

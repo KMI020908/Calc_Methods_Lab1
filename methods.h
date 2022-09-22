@@ -8,18 +8,23 @@
 #include<iostream>
 
 template<typename Type>
-SOLUTION_FLAG gaussMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, std::vector<Type> &solution,
-const std::string &OUT_FILE_PATH = "empty", Type disturbance = 0.0);
+SOLUTION_FLAG gaussMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, std::vector<Type> &solution, 
+Type accuracy = std::numeric_limits<Type>::epsilon());
 
 template<typename Type>
 SOLUTION_FLAG qrMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, std::vector<Type> &solution, 
-const std::string &OUT_FILE_PATH = "empty", Type disturbance = 0.0);
+Type accuracy = std::numeric_limits<Type>::epsilon());
 
 template<typename Type>
-Type findCond_1(const std::vector<std::vector<Type>> &A, std::vector<std::vector<Type>> &B);
+Type findResidual(const std::vector<std::vector<Type>> &lCoefs, const std::vector<Type> &rCoefs, const std::vector<Type> &solution);
 
 template<typename Type>
-Type findCond_inf(const std::vector<std::vector<Type>> &A, std::vector<std::vector<Type>> &B);
+Type findCond_1(const std::vector<std::vector<Type>> &A); // Число обусловленности с октаэдоической метрикой
 
+template<typename Type>
+Type findCond_inf(const std::vector<std::vector<Type>> &A); // Число обусловленности с кубической метрикой
+
+template<typename Type>
+INVERTIBLE_FLAG invertMatrix(const std::vector<std::vector<Type>> &inputMatrix, std::vector<std::vector<Type>> &resMatrix); // Обратная матрица
 
 #endif
