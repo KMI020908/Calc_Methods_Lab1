@@ -31,7 +31,7 @@ SOLUTION_FLAG gaussMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Ty
                 lCoefs[i][j] = lCoefs[i][j] - C*lCoefs[k][j];
             }  
         }
-        if (abs(mainValue) < accuracy) // detA = 0
+        if (std::abs(mainValue) < accuracy) // detA = 0
             return NO_SOLUTION;
     }
     // Обратный ход Гаусса
@@ -46,46 +46,30 @@ SOLUTION_FLAG gaussMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Ty
 
 template<typename Type>
 SOLUTION_FLAG qrMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, std::vector<Type> &solution, Type accuracy){
-    size_t dimMatrix = lCoefs.size(); // Размерность СЛАУ
+    std::size_t dimMatrix = lCoefs.size(); // Размерность СЛАУ
     solution.resize(dimMatrix);
-    for (size_t k = 0; k < dimMatrix; k++){
-        Type mainValue = lCoefs[k][k];    // Главный элемент
-        size_t mainRow = k; // Строка главного элемента
-        for (size_t i = k + 1; i < dimMatrix; i++){   // Частичный выбор главного элемента
-            if (abs(lCoefs[i][k]) > abs(mainValue)){
-                mainValue = lCoefs[i][k]; 
-                mainRow = i;
+    for (std::size_t k = 0; k < dimMatrix; k++){
+        for (std::size_t i = k + 1; i < dimMatrix; i++){
+            if (std::abs(lCoefs[i][k]) >= accuracy){
+                Type c = lCoefs[k][k]/sqrt(lCoefs[k][k]*lCoefs[k][k] + lCoefs[i][k]*lCoefs[i][k]);
+                Type s = lCoefs[i][k]/sqrt(lCoefs[k][k]*lCoefs[k][k] + lCoefs[i][k]*lCoefs[i][k]);
+                for (std::size_t j = k; j < dimMatrix; j++){
+                    Type temp = lCoefs[k][j];
+                    lCoefs[k][j] = c*lCoefs[k][j] + s*lCoefs[i][j];
+                    lCoefs[i][j] = -s*temp + c*lCoefs[i][j];
+                    if (std::abs(lCoefs[i][j]) < std::numeric_limits<Type>::epsilon())
+                        lCoefs[i][j] = 0;
+                }
+                Type temp = rCoefs[k];
+                rCoefs[k] = c*rCoefs[k] + s*rCoefs[i];
+                rCoefs[i] = -s*temp + c*rCoefs[i];
             }
-        }
-        if (mainValue != lCoefs[k][k]){ //Замена строк
-            Type temp;
-            for (size_t i = 0; i < dimMatrix; i++){
-                temp = lCoefs[k][i];
-                lCoefs[k][i] = lCoefs[mainRow][i];
-                lCoefs[mainRow][i] = temp;
-            }
-            temp =rCoefs[k];
-            rCoefs[k] = rCoefs[mainRow];
-            rCoefs[mainRow] = temp;
-        }
-        if (abs(mainValue) < accuracy) // detA = 0
-            return NO_SOLUTION;
-            
-        for (size_t i = k + 1; i < dimMatrix; i++){
-            Type c = lCoefs[k][k]/sqrt(lCoefs[k][k]*lCoefs[k][k] + lCoefs[i][k]*lCoefs[i][k]);
-            Type s = lCoefs[i][k]/sqrt(lCoefs[k][k]*lCoefs[k][k] + lCoefs[i][k]*lCoefs[i][k]);
-            for (size_t j = k; j < dimMatrix; j++){
-                Type temp = lCoefs[k][j];
-                lCoefs[k][j] = c*lCoefs[k][j] + s*lCoefs[i][j];
-                lCoefs[i][j] = -s*temp + c*lCoefs[i][j];
-                if (abs(lCoefs[i][j]) < std::numeric_limits<Type>::epsilon())
-                    lCoefs[i][j] = 0;
-            }
-            Type temp = rCoefs[k];
-            rCoefs[k] = c*rCoefs[k] + s*rCoefs[i];
-            rCoefs[i] = -s*temp + c*rCoefs[i];
         }
     }
+    if (std::abs(lCoefs[dimMatrix - 1][dimMatrix - 1]) < accuracy){  // detA = 0
+        return NO_SOLUTION;
+    }
+    
      // Обратный ход Гаусса
     for (int i = dimMatrix - 1; i >= 0 ; i--){
         Type sum = 0.0;
@@ -94,6 +78,47 @@ SOLUTION_FLAG qrMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Type>
         solution[i] = (rCoefs[i] - sum)/lCoefs[i][i];
     }   
     return HAS_SOLUTION;
+}
+
+template<typename Type>
+void findQMatrix(std::vector<std::vector<Type>> &lCoefs, std::vector<std::vector<Type>> &Q, Type accuracy){
+    std::size_t dimMatrix = lCoefs.size();
+    Q.resize(dimMatrix);
+    for (std::size_t i = 0; i < dimMatrix; i++){
+        Q[i].resize(dimMatrix, 0);
+    }
+    for (std::size_t i = 0; i < dimMatrix; i++){
+        Q[i][i] = 1;
+    }
+    for (std::size_t k = 0; k < dimMatrix; k++){
+        for (std::size_t i = k + 1; i < dimMatrix; i++){
+            if (std::abs(lCoefs[i][k]) >= accuracy){
+                Type c = lCoefs[k][k]/sqrt(lCoefs[k][k]*lCoefs[k][k] + lCoefs[i][k]*lCoefs[i][k]);
+                Type s = lCoefs[i][k]/sqrt(lCoefs[k][k]*lCoefs[k][k] + lCoefs[i][k]*lCoefs[i][k]);
+                for (std::size_t j = 0; j < dimMatrix; j++){
+                    Type temp = Q[k][j];
+                    Q[k][j] = c*Q[k][j] + s*Q[i][j];
+                    Q[i][j] = -s*temp + c*Q[i][j];
+                    if (std::abs(Q[i][j]) < std::numeric_limits<Type>::epsilon())
+                        Q[i][j] = 0;
+                }
+                for (std::size_t j = k; j < dimMatrix; j++){
+                    Type temp = lCoefs[k][j];
+                    lCoefs[k][j] = c*lCoefs[k][j] + s*lCoefs[i][j];
+                    lCoefs[i][j] = -s*temp + c*lCoefs[i][j];
+                }
+            }
+        }
+    }
+    for (std::size_t i = 0; i < dimMatrix; i++){
+        for (std::size_t j = 0; j < dimMatrix; j++){
+            if (i != j){
+                Type temp = Q[i][j];
+                Q[i][j] = Q[j][i];
+                Q[j][i] = temp;
+           }  
+        }
+    }
 }
 
 template<typename Type>
@@ -118,7 +143,6 @@ Type findResidual(const std::vector<std::vector<Type>> &lCoefs, const std::vecto
     return std::sqrt(discrepancy);
 }
 
-// Нахождение числа обусловности для октаэдрической нормы
 template<typename Type>
 Type findCond_1(const std::vector<std::vector<Type>> &A){
     std::size_t dimMatrix = A.size();
@@ -148,7 +172,6 @@ Type findCond_1(const std::vector<std::vector<Type>> &A){
     return cond;
 }
 
-// Нахождение числа обусловности для кубической нормы
 template<typename Type>
 Type findCond_inf(const std::vector<std::vector<Type>> &A){
     std::size_t dimMatrix = A.size();
@@ -184,16 +207,11 @@ INVERTIBLE_FLAG invertMatrix(const std::vector<std::vector<Type>> &inputMatrix, 
     resMatrix.resize(dimMatrix);
     std::vector<std::vector<Type>> E(dimMatrix);
     for (std::size_t i = 0; i < dimMatrix; i++){
-        E[i].resize(dimMatrix);
+        E[i].resize(dimMatrix, 0);
         resMatrix[i].resize(dimMatrix);
     }
     for (std::size_t i = 0; i < dimMatrix; i++){
-        for (std::size_t j = 0; j < dimMatrix; j++){
-            if (i == j)
-                E[i][j] = 1.0;
-            else
-                E[i][j] = 0.0;   
-        }
+        E[i][i] = 1;
     }
     std::vector<Type> solution(dimMatrix);
     std::vector<std::vector<Type>> tempMatrix(dimMatrix);

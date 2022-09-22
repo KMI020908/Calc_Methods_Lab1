@@ -10,9 +10,9 @@ const std::string &IN_FILE_PATH, const std::string &G_OUT_FILE_PATH, const std::
     readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
     std::vector<Type> solution;
     SOLUTION_FLAG flag = gaussMethod<Type>(lCoefSys, rCoefSys, solution);
-    readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH); 
     if (flag == HAS_SOLUTION){
         writeData(solution, G_OUT_FILE_PATH);
+        readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH); 
         Type cond_1 = findCond_1(lCoefSys);
         Type cond_inf = findCond_inf(lCoefSys);
         writeConds(cond_1, cond_inf, G_OUT_FILE_PATH);
@@ -35,10 +35,14 @@ const std::string &IN_FILE_PATH, const std::string &G_OUT_FILE_PATH, const std::
     }
 
     readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
-    flag = qrMethod<Type>(lCoefSys, rCoefSys, solution);
-    readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH); 
+    std::vector<std::vector<Type>> Q;
+    findQMatrix(lCoefSys, Q);
+    readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
+    flag = qrMethod<Type>(lCoefSys, rCoefSys, solution); 
     if (flag == HAS_SOLUTION){
         writeData(solution, QR_OUT_FILE_PATH);
+        writeQRMatrix(Q, lCoefSys, QR_OUT_FILE_PATH);
+        readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
         Type cond_1 = findCond_1(lCoefSys);
         Type cond_inf = findCond_inf(lCoefSys);
         writeConds(cond_1, cond_inf, QR_OUT_FILE_PATH);
