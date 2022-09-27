@@ -22,11 +22,18 @@ const std::string &IN_FILE_PATH, const std::string &G_OUT_FILE_PATH, const std::
         readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
         Type residual = findResidual(lCoefSys, rCoefSys, solution);
         writeResidual(residual, G_OUT_FILE_PATH);
+        // Возбуждение = perturbation
         for (std::size_t i = 0; i < lCoefSys.size(); i++){
             rCoefSys[i] += perturbation;
         }
         flag = gaussMethod(lCoefSys, rCoefSys, solution);
         addPerturbation(solution, G_OUT_FILE_PATH, perturbation, flag);
+        // Возбуждение = -perturbation
+        for (std::size_t i = 0; i < lCoefSys.size(); i++){
+            rCoefSys[i] -= 2 * perturbation;
+        }
+        flag = gaussMethod(lCoefSys, rCoefSys, solution);
+        addPerturbation(solution, G_OUT_FILE_PATH, -perturbation, flag);
     }
     else{
         writeData(solution, G_OUT_FILE_PATH, NO_SOLUTION);    
@@ -52,12 +59,18 @@ const std::string &IN_FILE_PATH, const std::string &G_OUT_FILE_PATH, const std::
         readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
         Type residual = findResidual(lCoefSys, rCoefSys, solution);
         writeResidual(residual, QR_OUT_FILE_PATH);
+        // Возбуждение = perturbation
         for (std::size_t i = 0; i < lCoefSys.size(); i++){
             rCoefSys[i] += perturbation;
         }
-        qrMethod<Type>(lCoefSys, rCoefSys, solution);
         flag = qrMethod<Type>(lCoefSys, rCoefSys, solution);
         addPerturbation(solution, QR_OUT_FILE_PATH, perturbation, flag);
+        // Возбуждение = -perturbation
+        for (std::size_t i = 0; i < lCoefSys.size(); i++){
+            rCoefSys[i] -= 2 * perturbation;
+        }
+        flag = qrMethod<Type>(lCoefSys, rCoefSys, solution);
+        addPerturbation(solution, QR_OUT_FILE_PATH, -perturbation, flag);
     }
     else{
         writeData(solution, QR_OUT_FILE_PATH, NO_SOLUTION);    
