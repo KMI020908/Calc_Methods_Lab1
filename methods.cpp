@@ -116,17 +116,17 @@ void findQMatrix(std::vector<std::vector<Type>> &lCoefs, std::vector<std::vector
 }
 
 template<typename Type>
-void trasposeMatrix(std::vector<std::vector<Type>> &Matrix){
-    std::size_t rows = Matrix.size();
+void trasposeMatrix(std::vector<std::vector<Type>> &matrix){
+    std::size_t rows = matrix.size();
     std::size_t cols = 0;
     if (rows != 0)
-        cols = Matrix[0].size();
+        cols = matrix[0].size();
     if (rows != 0){
         for (std::size_t i = 0; i < rows; i++){
             for (std::size_t j = i + 1; j < cols; j++){
-                Type temp = Matrix[i][j];
-                Matrix[i][j] = Matrix[j][i];
-                Matrix[j][i] = temp;
+                Type temp = matrix[i][j];
+                matrix[i][j] = matrix[j][i];
+                matrix[j][i] = temp;
             }
         }
     }
@@ -155,13 +155,13 @@ Type findResidual(const std::vector<std::vector<Type>> &lCoefs, const std::vecto
 }
 
 template<typename Type>
-Type findMatrixNorm1(const std::vector<std::vector<Type>> &Matrix){
-    std::size_t dimMatrix = Matrix.size();
+Type findMatrixNorm1(const std::vector<std::vector<Type>> &matrix){
+    std::size_t dimMatrix = matrix.size();
     Type norm1OfMatrix = 0;
     for (std::size_t j = 0; j < dimMatrix; j++){
         Type sum = 0.0;
         for (std::size_t i = 0; i < dimMatrix; i++){
-            sum += std::abs(Matrix[i][j]);
+            sum += std::abs(matrix[i][j]);
         }
         if (sum > norm1OfMatrix)
             norm1OfMatrix = sum;
@@ -181,13 +181,13 @@ Type findCond_1(const std::vector<std::vector<Type>> &A){
 }
 
 template<typename Type>
-Type findMatrixNormInf(const std::vector<std::vector<Type>> &Matrix){
-    std::size_t dimMatrix = Matrix.size();
+Type findMatrixNormInf(const std::vector<std::vector<Type>> &matrix){
+    std::size_t dimMatrix = matrix.size();
     Type normInfOfMatrix = 0;
     for (std::size_t i = 0; i < dimMatrix; i++){
         Type sum = 0.0;
         for (std::size_t j = 0; j < dimMatrix; j++){
-            sum += std::abs(Matrix[i][j]);
+            sum += std::abs(matrix[i][j]);
         }
         if (sum > normInfOfMatrix)
             normInfOfMatrix = sum;
@@ -236,3 +236,19 @@ INVERTIBLE_FLAG invertMatrix(const std::vector<std::vector<Type>> &inputMatrix, 
     return IS_INVERTIBLE;
 }
 
+template<typename Type>
+Type norm1OfVector(const std::vector<Type> &vector){
+    Type sum = 0;
+    for (std::size_t i = 0; i < vector.size(); i++)
+        sum += std::abs(vector[i]);
+    return sum;
+}
+
+template<typename Type>
+Type normInfOfVector(const std::vector<Type> &vector){
+    Type max = std::abs(vector[0]);
+    for (std::size_t i = 1; i < vector.size(); i++)
+        if (std::abs(vector[i]) > max)
+            max = std::abs(vector[i]);
+    return max;
+}
