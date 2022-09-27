@@ -29,8 +29,9 @@ const std::string &IN_FILE_PATH, const std::string &G_OUT_FILE_PATH, const std::
         flag = gaussMethod(lCoefSys, rCoefSys, solution);
         addPerturbation(solution, G_OUT_FILE_PATH, perturbation, flag);
         // Возбуждение = -perturbation
+        readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
         for (std::size_t i = 0; i < lCoefSys.size(); i++){
-            rCoefSys[i] -= 2 * perturbation;
+            rCoefSys[i] -= perturbation;
         }
         flag = gaussMethod(lCoefSys, rCoefSys, solution);
         addPerturbation(solution, G_OUT_FILE_PATH, -perturbation, flag);
@@ -66,8 +67,9 @@ const std::string &IN_FILE_PATH, const std::string &G_OUT_FILE_PATH, const std::
         flag = qrMethod<Type>(lCoefSys, rCoefSys, solution);
         addPerturbation(solution, QR_OUT_FILE_PATH, perturbation, flag);
         // Возбуждение = -perturbation
+        readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
         for (std::size_t i = 0; i < lCoefSys.size(); i++){
-            rCoefSys[i] -= 2 * perturbation;
+            rCoefSys[i] -= perturbation;
         }
         flag = qrMethod<Type>(lCoefSys, rCoefSys, solution);
         addPerturbation(solution, QR_OUT_FILE_PATH, -perturbation, flag);
