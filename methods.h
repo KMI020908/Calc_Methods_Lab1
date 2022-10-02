@@ -3,20 +3,19 @@
 
 #include<vector>
 #include<cmath>
-#include<limits>
 #include"ioData.h"
 #include<iostream>
 
 template<typename Type>
 SOLUTION_FLAG gaussMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, std::vector<Type> &solution, 
-Type accuracy = std::numeric_limits<Type>::epsilon());
+Type accuracy = 1e-6);
 
 template<typename Type>
 SOLUTION_FLAG qrMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, std::vector<Type> &solution, 
-Type accuracy = std::numeric_limits<Type>::epsilon());
+Type accuracy = 1e-6);
 
 template<typename Type>
-void findQMatrix(std::vector<std::vector<Type>> &lCoefs, std::vector<std::vector<Type>> &Q, Type accuracy = std::numeric_limits<Type>::epsilon());
+void findQMatrix(std::vector<std::vector<Type>> &lCoefs, std::vector<std::vector<Type>> &Q, Type accuracy = 1e-6);
 
 template<typename Type>
 Type findResidual(const std::vector<std::vector<Type>> &lCoefs, const std::vector<Type> &rCoefs, const std::vector<Type> &solution); // Найти невязку

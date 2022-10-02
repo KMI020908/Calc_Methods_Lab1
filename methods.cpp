@@ -99,14 +99,14 @@ void findQMatrix(std::vector<std::vector<Type>> &lCoefs, std::vector<std::vector
                     Type temp = Q[k][j];
                     Q[k][j] = c*Q[k][j] + s*Q[i][j];
                     Q[i][j] = -s*temp + c*Q[i][j];
-                    if (std::abs(Q[i][j]) < std::numeric_limits<Type>::epsilon())
+                    if (std::abs(Q[i][j]) < accuracy)
                         Q[i][j] = 0;
                 }
                 for (std::size_t j = k; j < dimMatrix; j++){
                     Type temp = lCoefs[k][j];
                     lCoefs[k][j] = c*lCoefs[k][j] + s*lCoefs[i][j];
                     lCoefs[i][j] = -s*temp + c*lCoefs[i][j];
-                    if (std::abs(lCoefs[i][j]) < std::numeric_limits<Type>::epsilon())
+                    if (std::abs(lCoefs[i][j]) < accuracy)
                         lCoefs[i][j] = 0;
                 }
             }
