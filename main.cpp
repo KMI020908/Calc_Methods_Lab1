@@ -107,5 +107,47 @@ void temp_main(){
 
 int main(){
     temp_main<double>();
+
+    std::vector<std::vector<double>> lCoefSys; // Матрица левых коэффициентов
+    std::vector<double> rCoefSys; // Вектор правых коэффициентов
+    std::vector<double> solution; // Решение
+/*
+    readData<double>(lCoefSys, rCoefSys, IN_FILE_PATH_3);
+
+    std::vector<std::vector<double>> res;
+
+    invertMatrix(lCoefSys, res);
+    for (int i = 0; i < lCoefSys.size(); i++)
+    {
+        for (size_t j = 0; j < lCoefSys.size(); j++){
+            std::cout << res[i][j] << ' ';
+        }
+        std::cout << '\n';
+    }    
+*/
+    std::size_t dim = 37;
+    std::vector<double> tempVec;
+    for (size_t i = 0; i < dim; i++){
+        for (size_t j = 0; j < dim; j++){
+            tempVec.push_back(1.0/(i + j - 1));
+        }
+        lCoefSys.push_back(tempVec);
+    }
+    for (size_t i = 0; i < dim; i++){
+        rCoefSys.push_back(1 / i);
+    }
+
+    for (size_t i = 0; i < dim; i++){
+        for (size_t j = 0; j < dim; j++){
+            std::cout << lCoefSys[i][j] << ' ';
+        }
+        std::cout << '\n';
+    }
+    gaussMethod(lCoefSys, rCoefSys, solution);
+    for (size_t i = 0; i < dim; i++)
+    {
+        std::cout << solution[i] << '\n';
+    }
+    
     return 0;
 }
