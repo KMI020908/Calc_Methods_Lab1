@@ -173,9 +173,13 @@ template<typename Type>
 Type findCond_1(const std::vector<std::vector<Type>> &A){
     std::size_t dimMatrix = A.size();
     std::vector<std::vector<Type>> B; //Обратная к A матрица
-    invertMatrix(A, B);
+    INVERTIBLE_FLAG flag = invertMatrix(A, B);
     Type norm1OfA = findMatrixNorm1(A);
-    Type norm1OfB = findMatrixNorm1(B);
+    Type norm1OfB = 0;
+    if (flag == IS_INVERTIBLE)
+        norm1OfB = findMatrixNorm1(B);
+    else
+        norm1OfB = INFINITY;
     Type cond = norm1OfA * norm1OfB;
     return cond;
 }
@@ -199,9 +203,13 @@ template<typename Type>
 Type findCond_inf(const std::vector<std::vector<Type>> &A){
     std::size_t dimMatrix = A.size();
     std::vector<std::vector<Type>> B; //Обратная к A матрица
-    invertMatrix(A, B);
+    INVERTIBLE_FLAG flag = invertMatrix(A, B);
     Type normInfOfA = findMatrixNormInf(A);
-    Type normInfOfB = findMatrixNormInf(B);
+    Type normInfOfB = 0;
+    if (flag == IS_INVERTIBLE)
+        normInfOfB = findMatrixNorm1(B);
+    else
+        normInfOfB = INFINITY;
     Type cond = normInfOfA * normInfOfB;
     return cond;
 }

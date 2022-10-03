@@ -30,6 +30,6 @@ template<typename Type>
 FILE_FLAG addPerturbation(const std::vector<Type> &solution, const std::string& OUT_FILE_PATH, Type perturbation, SOLUTION_FLAG FLAG = HAS_SOLUTION);
 
 template<typename Type>
-FILE_FLAG writeConds(Type cond_1, Type cond_inf, const std::string& OUT_FILE_PATH, SOLUTION_FLAG FLAG = HAS_SOLUTION);
+FILE_FLAG writeConds(Type cond_1, Type cond_inf, const std::string& OUT_FILE_PATH);
 
 #endif

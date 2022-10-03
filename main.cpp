@@ -38,8 +38,10 @@ const std::string &IN_FILE_PATH, const std::string &G_OUT_FILE_PATH, const std::
     }
     else{
         writeData(solution, G_OUT_FILE_PATH, NO_SOLUTION);    
-        Type cond_1, cond_inf = 0;
-        writeConds(cond_1, cond_inf, G_OUT_FILE_PATH, NO_SOLUTION);
+        readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH); 
+        Type cond_1 = findCond_1(lCoefSys);
+        Type cond_inf = findCond_inf(lCoefSys);
+        writeConds(cond_1, cond_inf, G_OUT_FILE_PATH);
     }
 
     readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
@@ -76,8 +78,9 @@ const std::string &IN_FILE_PATH, const std::string &G_OUT_FILE_PATH, const std::
     }
     else{
         writeData(solution, QR_OUT_FILE_PATH, NO_SOLUTION);    
-        Type cond_1, cond_inf = 0;
-        writeConds(cond_1, cond_inf, QR_OUT_FILE_PATH, NO_SOLUTION);
+        Type cond_1 = findCond_1(lCoefSys);
+        Type cond_inf = findCond_inf(lCoefSys);
+        writeConds(cond_1, cond_inf, QR_OUT_FILE_PATH);
     }
 }
 
@@ -108,46 +111,25 @@ void temp_main(){
 int main(){
     temp_main<double>();
 
-    std::vector<std::vector<double>> lCoefSys; // Матрица левых коэффициентов
-    std::vector<double> rCoefSys; // Вектор правых коэффициентов
-    std::vector<double> solution; // Решение
-/*
-    readData<double>(lCoefSys, rCoefSys, IN_FILE_PATH_3);
-
-    std::vector<std::vector<double>> res;
-
-    invertMatrix(lCoefSys, res);
-    for (int i = 0; i < lCoefSys.size(); i++)
-    {
-        for (size_t j = 0; j < lCoefSys.size(); j++){
-            std::cout << res[i][j] << ' ';
-        }
-        std::cout << '\n';
-    }    
-*/
+    std::vector<std::vector<double>> A; // Матрица левых коэффициентов
+    std::vector<double> b; // Вектор правых коэффициентов
     std::size_t dim = 37;
     std::vector<double> tempVec;
-    for (size_t i = 0; i < dim; i++){
-        for (size_t j = 0; j < dim; j++){
+    for (size_t i = 1; i <= dim; i++){
+        for (size_t j = 1; j <= dim; j++){
             tempVec.push_back(1.0/(i + j - 1));
         }
-        lCoefSys.push_back(tempVec);
+        A.push_back(tempVec);
+        tempVec.clear();
     }
-    for (size_t i = 0; i < dim; i++){
-        rCoefSys.push_back(1 / i);
+    for (size_t i = 1; i <= dim; i++){
+        b.push_back(1.0 / i);
     }
 
-    for (size_t i = 0; i < dim; i++){
-        for (size_t j = 0; j < dim; j++){
-            std::cout << lCoefSys[i][j] << ' ';
-        }
-        std::cout << '\n';
-    }
-    gaussMethod(lCoefSys, rCoefSys, solution);
-    for (size_t i = 0; i < dim; i++)
-    {
-        std::cout << solution[i] << '\n';
-    }
+    std::cout << "Числа обусловленности для плохого теста: " << findCond_1(A) << '\t' << findCond_inf(A) << '\n' << '\n';
+    std::vector<double> X; // Решение
+
+    std::cout << gaussMethod(A, b, X) << '\n';
     
     return 0;
 }
