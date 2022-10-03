@@ -11,6 +11,10 @@ SOLUTION_FLAG gaussMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Ty
 Type accuracy = 1e-6);
 
 template<typename Type>
+SOLUTION_FLAG gaussMethodFull(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, std::vector<Type> &solution, 
+Type accuracy = 1e-6); // Метод Гаусса с полным выбором главного элемента
+
+template<typename Type>
 SOLUTION_FLAG qrMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, std::vector<Type> &solution, 
 Type accuracy = 1e-6);
 

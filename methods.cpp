@@ -13,7 +13,7 @@ SOLUTION_FLAG gaussMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Ty
                 mainRow = i;
             }
         }
-        if (mainValue != lCoefs[k][k]){ //Замена строк
+        if (mainRow != k){ //Замена строк
             Type temp;
             for (std::size_t i = 0; i < dimMatrix; i++){
                 temp = lCoefs[k][i];
@@ -45,6 +45,79 @@ SOLUTION_FLAG gaussMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Ty
 }
 
 template<typename Type>
+SOLUTION_FLAG gaussMethodFull(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, std::vector<Type> &solution, Type accuracy){
+    std::size_t dimMatrix = lCoefs.size(); // Размерность СЛАУ
+    solution.resize(dimMatrix);
+    std::vector<std::size_t> switchCols; // Вектор, хранящий индексы перемещенных столбцов исходной матрицы
+    for (std::size_t k = 0; k < dimMatrix; k++){ // Прямой ход Гаусса
+        Type mainValue = lCoefs[k][k];    // Главный элемент
+        std::size_t mainRow = k; // Строка главного элемента
+        std::size_t mainСol = k; // Столбец главного элемента
+        // Полный выбор
+        // Поиск главного элмента в k-ом столбце  
+        for (std::size_t i = k + 1; i < dimMatrix; i++){ 
+            if (std::abs(lCoefs[i][k]) > std::abs(mainValue)){
+                mainValue = lCoefs[i][k]; 
+                mainRow = i;
+            }
+        }
+        if (mainRow != k){ //Замена строк
+            Type temp;
+            for (std::size_t j = 0; j < dimMatrix; j++){
+                temp = lCoefs[k][j];
+                lCoefs[k][j] = lCoefs[mainRow][j];
+                lCoefs[mainRow][j] = temp;
+            }
+            temp =rCoefs[k];
+            rCoefs[k] = rCoefs[mainRow];
+            rCoefs[mainRow] = temp;
+        }
+        // Поиск главного элмента в k-ой строке 
+        for (std::size_t j = k + 1; j < dimMatrix; j++){ 
+            if (std::abs(lCoefs[k][j]) > std::abs(mainValue)){
+                mainValue = lCoefs[k][j]; 
+                mainСol = j;
+            }
+        }
+        //Замена столбцов
+        if (mainСol != k){ 
+            Type temp;
+            for (std::size_t i = 0; i < dimMatrix; i++){
+                temp = lCoefs[i][k];
+                lCoefs[i][k] = lCoefs[i][mainСol];
+                lCoefs[i][mainСol] = temp;
+            }
+            switchCols.push_back(k);
+            switchCols.push_back(mainСol);
+        }
+
+        // Прямой ход Гаусса 
+        for (std::size_t i = k + 1; i < dimMatrix; i++){ 
+            Type C = lCoefs[i][k]/lCoefs[k][k];
+            rCoefs[i] = rCoefs[i] - C*rCoefs[k];
+            for (std::size_t j = k;  j < dimMatrix; j++){
+                lCoefs[i][j] = lCoefs[i][j] - C*lCoefs[k][j];
+            }  
+        }
+        if (std::abs(mainValue) < accuracy) // detA = 0
+            return NO_SOLUTION;
+    }
+    // Обратный ход Гаусса
+    for (std::int32_t i = dimMatrix - 1; i >= 0 ; i--){
+        Type sum = 0.0;
+        for (std::size_t j = i + 1; j < dimMatrix; j++)
+            sum += lCoefs[i][j] * solution[j]; 
+        solution[i] = (rCoefs[i] - sum)/lCoefs[i][i];
+    }
+    for (std::int32_t i = switchCols.size() - 2; i >= 0; i -= 2){
+        Type temp = solution[switchCols[i]];
+        solution[switchCols[i]] = solution[switchCols[i + 1]];
+        solution[switchCols[i + 1]] = temp;
+    }
+    return HAS_SOLUTION;
+}
+
+template<typename Type>
 SOLUTION_FLAG qrMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, std::vector<Type> &solution, Type accuracy){
     std::size_t dimMatrix = lCoefs.size(); // Размерность СЛАУ
     solution.resize(dimMatrix);
@@ -71,7 +144,7 @@ SOLUTION_FLAG qrMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Type>
     }
     
      // Обратный ход Гаусса
-    for (int i = dimMatrix - 1; i >= 0 ; i--){
+    for (std::int32_t i = dimMatrix - 1; i >= 0 ; i--){
         Type sum = 0.0;
         for (std::size_t j = i + 1; j < dimMatrix; j++)
             sum += lCoefs[i][j] * solution[j]; 
