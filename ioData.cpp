@@ -165,3 +165,17 @@ FILE_FLAG writeConds(Type cond_1, Type cond_inf, const std::string& OUT_FILE_PAT
     file.close();
     return IS_CLOSED;
 } 
+
+template<typename Type>
+FILE_FLAG writeLowerBounds(Type lowerBound1, Type lowerBoundInf, const std::string& OUT_FILE_PATH){
+    std::ofstream file;
+	file.open(OUT_FILE_PATH, std::ios::app);
+	if (!file.is_open())
+		exit(NOT_OPEN);
+    file << '\n' << '\n';
+    file << lowerBound1 << " ≤ cond_1 A";
+    file << '\n' << '\n';
+    file << lowerBoundInf << " ≤ cond_inf A";
+    file.close();
+    return IS_CLOSED;
+}

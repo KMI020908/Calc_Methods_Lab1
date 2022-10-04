@@ -11,76 +11,88 @@ const std::string &IN_FILE_PATH, const std::string &G_OUT_FILE_PATH, const std::
     std::vector<Type> solution;
     SOLUTION_FLAG flag = gaussMethod<Type>(lCoefSys, rCoefSys, solution);
     if (flag == HAS_SOLUTION){
-        writeData(solution, G_OUT_FILE_PATH);
+        writeData<Type>(solution, G_OUT_FILE_PATH);
         readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH); 
-        Type cond_1 = findCond_1(lCoefSys);
-        Type cond_inf = findCond_inf(lCoefSys);
-        writeConds(cond_1, cond_inf, G_OUT_FILE_PATH);
-        std::vector<std::vector<Type>> invertlCoefSys;
-        invertMatrix(lCoefSys, invertlCoefSys);
-        writeMatrixMultiply(invertlCoefSys, lCoefSys, G_OUT_FILE_PATH);
+        Type cond_1 = findCond_1<Type>(lCoefSys);
+        Type cond_inf = findCond_inf<Type>(lCoefSys);
+        writeConds<Type>(cond_1, cond_inf, G_OUT_FILE_PATH);
         readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
-        Type residual = findResidual(lCoefSys, rCoefSys, solution);
-        writeResidual(residual, G_OUT_FILE_PATH);
+        Type lowerBound1 = findLowerBoundOfcond1(lCoefSys, rCoefSys);
+        readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
+        Type lowerBoundInf = findLowerBoundOfcondInf(lCoefSys, rCoefSys);
+        writeLowerBounds<Type>(lowerBound1, lowerBoundInf, G_OUT_FILE_PATH);
+        readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
+        std::vector<std::vector<Type>> invertlCoefSys;
+        invertMatrix<Type>(lCoefSys, invertlCoefSys);
+        writeMatrixMultiply<Type>(invertlCoefSys, lCoefSys, G_OUT_FILE_PATH);
+        readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
+        Type residual = findResidual<Type>(lCoefSys, rCoefSys, solution);
+        writeResidual<Type>(residual, G_OUT_FILE_PATH);
         // Возбуждение = perturbation
         for (std::size_t i = 0; i < lCoefSys.size(); i++){
             rCoefSys[i] += perturbation;
         }
-        flag = gaussMethod(lCoefSys, rCoefSys, solution);
-        addPerturbation(solution, G_OUT_FILE_PATH, perturbation, flag);
+        flag = gaussMethod<Type>(lCoefSys, rCoefSys, solution);
+        addPerturbation<Type>(solution, G_OUT_FILE_PATH, perturbation, flag);
         // Возбуждение = -perturbation
         readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
         for (std::size_t i = 0; i < lCoefSys.size(); i++){
             rCoefSys[i] -= perturbation;
         }
-        flag = gaussMethod(lCoefSys, rCoefSys, solution);
-        addPerturbation(solution, G_OUT_FILE_PATH, -perturbation, flag);
+        flag = gaussMethod<Type>(lCoefSys, rCoefSys, solution);
+        addPerturbation<Type>(solution, G_OUT_FILE_PATH, -perturbation, flag);
+        readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
     }
     else{
-        writeData(solution, G_OUT_FILE_PATH, NO_SOLUTION);    
+        writeData<Type>(solution, G_OUT_FILE_PATH, NO_SOLUTION);    
         readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH); 
-        Type cond_1 = findCond_1(lCoefSys);
-        Type cond_inf = findCond_inf(lCoefSys);
-        writeConds(cond_1, cond_inf, G_OUT_FILE_PATH);
+        Type cond_1 = findCond_1<Type>(lCoefSys);
+        Type cond_inf = findCond_inf<Type>(lCoefSys);
+        writeConds<Type>(cond_1, cond_inf, G_OUT_FILE_PATH);
     }
 
     readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
     std::vector<std::vector<Type>> Q;
-    findQMatrix(lCoefSys, Q);
+    findQMatrix<Type>(lCoefSys, Q);
     readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
     flag = qrMethod<Type>(lCoefSys, rCoefSys, solution); 
     if (flag == HAS_SOLUTION){
-        writeData(solution, QR_OUT_FILE_PATH);
-        writeQRMatrix(Q, lCoefSys, QR_OUT_FILE_PATH);
+        writeData<Type>(solution, QR_OUT_FILE_PATH);
+        writeQRMatrix<Type>(Q, lCoefSys, QR_OUT_FILE_PATH);
         readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
-        Type cond_1 = findCond_1(lCoefSys);
-        Type cond_inf = findCond_inf(lCoefSys);
-        writeConds(cond_1, cond_inf, QR_OUT_FILE_PATH);
+        Type cond_1 = findCond_1<Type>(lCoefSys);
+        Type cond_inf = findCond_inf<Type>(lCoefSys);
+        writeConds<Type>(cond_1, cond_inf, QR_OUT_FILE_PATH);
+        readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
+        Type lowerBound1 = findLowerBoundOfcond1(lCoefSys, rCoefSys);
+        readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
+        Type lowerBoundInf = findLowerBoundOfcondInf(lCoefSys, rCoefSys);
+        writeLowerBounds<Type>(lowerBound1, lowerBoundInf, QR_OUT_FILE_PATH);
         std::vector<std::vector<Type>> invertlCoefSys;
-        invertMatrix(lCoefSys, invertlCoefSys);
-        writeMatrixMultiply(invertlCoefSys, lCoefSys, QR_OUT_FILE_PATH);
+        invertMatrix<Type>(lCoefSys, invertlCoefSys);
+        writeMatrixMultiply<Type>(invertlCoefSys, lCoefSys, QR_OUT_FILE_PATH);
         readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
-        Type residual = findResidual(lCoefSys, rCoefSys, solution);
-        writeResidual(residual, QR_OUT_FILE_PATH);
+        Type residual = findResidual<Type>(lCoefSys, rCoefSys, solution);
+        writeResidual<Type>(residual, QR_OUT_FILE_PATH);
         // Возбуждение = perturbation
         for (std::size_t i = 0; i < lCoefSys.size(); i++){
             rCoefSys[i] += perturbation;
         }
         flag = qrMethod<Type>(lCoefSys, rCoefSys, solution);
-        addPerturbation(solution, QR_OUT_FILE_PATH, perturbation, flag);
+        addPerturbation<Type>(solution, QR_OUT_FILE_PATH, perturbation, flag);
         // Возбуждение = -perturbation
         readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
         for (std::size_t i = 0; i < lCoefSys.size(); i++){
             rCoefSys[i] -= perturbation;
         }
         flag = qrMethod<Type>(lCoefSys, rCoefSys, solution);
-        addPerturbation(solution, QR_OUT_FILE_PATH, -perturbation, flag);
+        addPerturbation<Type>(solution, QR_OUT_FILE_PATH, -perturbation, flag);
     }
     else{
-        writeData(solution, QR_OUT_FILE_PATH, NO_SOLUTION);    
-        Type cond_1 = findCond_1(lCoefSys);
-        Type cond_inf = findCond_inf(lCoefSys);
-        writeConds(cond_1, cond_inf, QR_OUT_FILE_PATH);
+        writeData<Type>(solution, QR_OUT_FILE_PATH, NO_SOLUTION);    
+        Type cond_1 = findCond_1<Type>(lCoefSys);
+        Type cond_inf = findCond_inf<Type>(lCoefSys);
+        writeConds<Type>(cond_1, cond_inf, QR_OUT_FILE_PATH);
     }
 }
 
@@ -126,10 +138,15 @@ int main(){
         b.push_back(1.0 / i);
     }
 
-    std::cout << "Числа обусловленности для плохого теста: " << findCond_1(A) << '\t' << findCond_inf(A) << '\n' << '\n';
+    std::cout << "Числа обусловленности для плохого теста: " << findCond_1(A) << '\t' << findCond_inf(A) << '\n';
     std::vector<double> X; // Решение
+    SOLUTION_FLAG flag = gaussMethod(A, b, X);
+    if (flag == NO_SOLUTION)
+        std::cout << "Нет решения плохого теста" << '\n';
+    else
+        for (size_t i = 0; i < dim; i++){
+           std::cout << X[i] << '\n';
+        }
 
-    std::cout << gaussMethod(A, b, X) << '\n';
-    
     return 0;
 }

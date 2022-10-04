@@ -32,4 +32,7 @@ FILE_FLAG addPerturbation(const std::vector<Type> &solution, const std::string& 
 template<typename Type>
 FILE_FLAG writeConds(Type cond_1, Type cond_inf, const std::string& OUT_FILE_PATH);
 
+template<typename Type>
+FILE_FLAG writeLowerBounds(Type lowerBound1, Type lowerBoundInf, const std::string& OUT_FILE_PATH);
+
 #endif

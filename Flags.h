@@ -21,4 +21,10 @@ enum QUADRATIC_FLAG{
     IS_QUADRATIC // 1
 };
 
+enum MULTIPLIED_FLAG{
+    NOT_MULTIPLIED, // 0
+    IS_MULTIPLIED // 1
+};
+
+
 #endif 

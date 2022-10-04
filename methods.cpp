@@ -212,12 +212,12 @@ QUADRATIC_FLAG findQMatrix(std::vector<std::vector<Type>> &lCoefs, std::vector<s
             }
         }
     }
-    trasposeMatrix(Q);
+    transposeMatrix(Q);
     return IS_QUADRATIC;
 }
 
 template<typename Type>
-void trasposeMatrix(std::vector<std::vector<Type>> &matrix){
+void transposeMatrix(std::vector<std::vector<Type>> &matrix){
     std::size_t rows = matrix.size();
     std::size_t cols = 0;
     if (rows != 0)
@@ -400,4 +400,175 @@ Type normInfOfVector(const std::vector<Type> &vector){
         if (std::abs(vector[i]) > max)
             max = std::abs(vector[i]);
     return max;
+}
+
+template<typename Type>
+Type findLowerBoundOfcond1(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, Type delta1, Type delta2, Type delta3){
+    std::size_t rows = lCoefs.size(); // Количество строк в СЛАУ
+    std::size_t cols = 0;
+    if (rows != 0)
+        cols = lCoefs[0].size();
+    else
+        return NAN;
+    if (rows != cols)
+        return NAN;
+    std::vector<Type> rCoefs1(rows), rCoefs2(rows), rCoefs3(rows);
+    for (std::size_t i = 0; i < rows; i++){
+        rCoefs1[i] = rCoefs[i] + delta1;
+        rCoefs2[i] = rCoefs[i] + delta2;
+        rCoefs3[i] = rCoefs[i] + delta3;
+    }
+    std::vector<std::vector<Type>> Q;
+    findQMatrix(lCoefs, Q);
+    transposeMatrix(Q);
+
+    std::vector<Type> solution(rows), perturbSolution(rows), deltaSolution(rows);
+    std::vector<Type> tempRCoefs;
+
+    multiplyMatrix(Q, rCoefs, tempRCoefs);
+    qrMethod<Type>(lCoefs, tempRCoefs, solution);
+
+    multiplyMatrix(Q, rCoefs1, tempRCoefs);
+    qrMethod<Type>(lCoefs, tempRCoefs, perturbSolution);
+    for (std::size_t i = 0; i < cols; i++){
+        deltaSolution[i] = solution[i] - perturbSolution[i];
+    }
+    std::vector<Type> deltaRCoefs1(rows, delta1);
+    Type lowerBound = (norm1OfVector(deltaSolution) * norm1OfVector(rCoefs))/(norm1OfVector(solution) * norm1OfVector(deltaRCoefs1));
+
+    multiplyMatrix(Q, rCoefs2, tempRCoefs);
+    qrMethod<Type>(lCoefs, tempRCoefs, perturbSolution);
+    for (std::size_t i = 0; i < cols; i++){
+        deltaSolution[i] = solution[i] - perturbSolution[i];
+    }
+    std::vector<Type> deltaRCoefs2(rows, delta2);
+    Type bound = (norm1OfVector(deltaSolution) * norm1OfVector(rCoefs))/(norm1OfVector(solution) * norm1OfVector(deltaRCoefs2));
+    if (bound > lowerBound)
+        lowerBound = bound;
+
+    multiplyMatrix(Q, rCoefs3, tempRCoefs);
+    qrMethod<Type>(lCoefs, tempRCoefs, perturbSolution);
+    for (std::size_t i = 0; i < cols; i++){
+        deltaSolution[i] = solution[i] - perturbSolution[i];
+    }
+    std::vector<Type> deltaRCoefs3(rows, delta3);
+    bound = (norm1OfVector(deltaSolution) * norm1OfVector(rCoefs))/(norm1OfVector(solution) * norm1OfVector(deltaRCoefs3));
+    if (bound > lowerBound)
+        lowerBound = bound;
+    
+    return lowerBound;
+}
+
+template<typename Type>
+Type findLowerBoundOfcondInf(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, Type delta1, Type delta2, Type delta3){
+    std::size_t rows = lCoefs.size(); // Количество строк в СЛАУ
+    std::size_t cols = 0;
+    if (rows != 0)
+        cols = lCoefs[0].size();
+    else
+        return NAN;
+    if (rows != cols)
+        return NAN;
+    std::vector<Type> rCoefs1(rows), rCoefs2(rows), rCoefs3(rows);
+    for (std::size_t i = 0; i < rows; i++){
+        rCoefs1[i] = rCoefs[i] + delta1;
+        rCoefs2[i] = rCoefs[i] + delta2;
+        rCoefs3[i] = rCoefs[i] + delta3;
+    }
+    std::vector<std::vector<Type>> Q;
+    findQMatrix(lCoefs, Q);
+    transposeMatrix(Q);
+
+    std::vector<Type> solution(rows), perturbSolution(rows), deltaSolution(rows);
+    std::vector<Type> tempRCoefs;
+
+    multiplyMatrix(Q, rCoefs, tempRCoefs);
+    qrMethod<Type>(lCoefs, tempRCoefs, solution);
+
+    multiplyMatrix(Q, rCoefs1, tempRCoefs);
+    qrMethod<Type>(lCoefs, tempRCoefs, perturbSolution);
+    for (std::size_t i = 0; i < cols; i++){
+        deltaSolution[i] = solution[i] - perturbSolution[i];
+    }
+    std::vector<Type> deltaRCoefs1(rows, delta1);
+    Type lowerBound = (normInfOfVector(deltaSolution) * normInfOfVector(rCoefs))/(normInfOfVector(solution) * normInfOfVector(deltaRCoefs1));
+
+    multiplyMatrix(Q, rCoefs2, tempRCoefs);
+    qrMethod<Type>(lCoefs, tempRCoefs, perturbSolution);
+    for (std::size_t i = 0; i < cols; i++){
+        deltaSolution[i] = solution[i] - perturbSolution[i];
+    }
+    std::vector<Type> deltaRCoefs2(rows, delta2);
+    Type bound = (normInfOfVector(deltaSolution) * normInfOfVector(rCoefs))/(normInfOfVector(solution) * normInfOfVector(deltaRCoefs2));
+    if (bound > lowerBound)
+        lowerBound = bound;
+
+    multiplyMatrix(Q, rCoefs3, tempRCoefs);
+    qrMethod<Type>(lCoefs, tempRCoefs, perturbSolution);
+    for (std::size_t i = 0; i < cols; i++){
+        deltaSolution[i] = solution[i] - perturbSolution[i];
+    }
+    std::vector<Type> deltaRCoefs3(rows, delta3);
+    bound = (normInfOfVector(deltaSolution) * normInfOfVector(rCoefs))/(normInfOfVector(solution) * normInfOfVector(deltaRCoefs3));
+    if (bound > lowerBound)
+        lowerBound = bound;
+    
+    return lowerBound;
+}
+
+template<typename Type>
+MULTIPLIED_FLAG multiplyMatrix(const std::vector<std::vector<Type>> &matrix1, const std::vector<std::vector<Type>> &matrix2, std::vector<std::vector<Type>> &result){
+    std::size_t rows1 = matrix1.size();
+    std::size_t cols1 = 0;
+    if (rows1 != 0)
+        cols1 = matrix1[0].size();
+    else
+        return NOT_MULTIPLIED;
+    std::size_t rows2 = matrix2.size();
+    std::size_t cols2 = 0;
+    if (rows2 != 0)
+        cols2 = matrix2[0].size();
+    else
+        return NOT_MULTIPLIED;
+    if (cols1 != rows2)
+        return NOT_MULTIPLIED;
+    result.resize(rows1);
+    for (std::size_t i = 0; i < rows1; i++){
+        result[i].resize(cols2);
+    }
+    std::size_t rows = result.size();
+    std::size_t cols = result[0].size();
+    for (size_t i = 0; i < rows; i++){
+        for (size_t j = 0; j < cols; j++){
+            Type sum = 0;
+            for (size_t k = 0; k < cols1; k++){
+                sum += matrix1[i][k] * matrix2[k][j];
+            }
+            result[i][j] = sum;
+        }
+    }
+    return IS_MULTIPLIED;
+}
+
+template<typename Type>
+MULTIPLIED_FLAG multiplyMatrix(const std::vector<std::vector<Type>> &matrix, const std::vector<Type> &vec, std::vector<Type> &result){
+    std::size_t rows1 = matrix.size();
+    std::size_t cols = 0;
+    if (rows1 != 0)
+        cols = matrix[0].size();
+    else
+        return NOT_MULTIPLIED;
+    std::size_t rows2 = vec.size();
+    if (cols != rows2)
+        return NOT_MULTIPLIED;
+    result.resize(rows1);
+    std::size_t rows = result.size();
+    for (size_t i = 0; i < rows; i++){
+        Type sum = 0;
+        for (size_t k = 0; k < cols; k++){
+            sum += matrix[i][k] * vec[k];
+        }
+        result[i] = sum;
+    }
+    return IS_MULTIPLIED;
 }
