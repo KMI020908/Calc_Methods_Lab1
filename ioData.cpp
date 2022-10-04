@@ -57,11 +57,7 @@ FILE_FLAG writeData(const std::vector<Type> &solution, const std::string& OUT_FI
         return IS_CLOSED;
     }
     file << "The solution:" << '\n';
-	file << "X = " << "{ ";
-    for (std::size_t i = 0; i < solution.size() - 1; i++)
-        file << solution[i] << ", ";
-    file << solution[solution.size() - 1] << ' ';
-    file << '}';
+	file << "X = " << solution;
 	file.close();
 	return IS_CLOSED;
 }

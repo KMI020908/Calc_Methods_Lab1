@@ -217,20 +217,21 @@ QUADRATIC_FLAG findQMatrix(std::vector<std::vector<Type>> &lCoefs, std::vector<s
 }
 
 template<typename Type>
-void transposeMatrix(std::vector<std::vector<Type>> &matrix){
+std::size_t transposeMatrix(std::vector<std::vector<Type>> &matrix){
     std::size_t rows = matrix.size();
     std::size_t cols = 0;
     if (rows != 0)
         cols = matrix[0].size();
-    if (rows != 0){
-        for (std::size_t i = 0; i < rows; i++){
-            for (std::size_t j = i + 1; j < cols; j++){
-                Type temp = matrix[i][j];
-                matrix[i][j] = matrix[j][i];
-                matrix[j][i] = temp;
-            }
+    else
+        return 0;
+    for (std::size_t i = 0; i < rows; i++){
+        for (std::size_t j = i + 1; j < cols; j++){
+            Type temp = matrix[i][j];
+            matrix[i][j] = matrix[j][i];
+            matrix[j][i] = temp;
         }
     }
+    return rows;
 }
 
 template<typename Type>
@@ -571,4 +572,41 @@ MULTIPLIED_FLAG multiplyMatrix(const std::vector<std::vector<Type>> &matrix, con
         result[i] = sum;
     }
     return IS_MULTIPLIED;
+}
+
+template<typename Type>
+std::ostream& operator<<(std::ostream &os, const std::vector<std::vector<Type>> &matrix){
+    std::size_t rows = matrix.size();
+    std::size_t cols = 0;
+    if (rows != 0)
+        cols = matrix[0].size();
+    else{
+        os << 0;
+        return os;
+    }
+    for (std::size_t i = 0; i < rows - 1; i++){
+        for (std::size_t j = 0; j < cols; j++){
+            os << matrix[i][j] << ' ';
+        }
+        std::cout << '\n';
+    }
+    for (std::size_t j = 0; j < cols; j++){
+            os << matrix[rows - 1][j] << ' ';
+        }
+    return os;
+}
+
+template<typename Type>
+std::ostream& operator<<(std::ostream &os, const std::vector<Type> &vector){
+    std::size_t rows = vector.size();
+    if (!rows){
+        os << 0;
+        return os;
+    }  
+    os << "{ ";
+    for (std::size_t i = 0; i < rows - 1; i++)
+        os << vector[i] << ", ";
+    os << vector[rows - 1] << ' ';
+    os << '}';
+    return os;
 }

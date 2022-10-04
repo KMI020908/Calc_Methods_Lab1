@@ -46,7 +46,7 @@ template<typename Type>
 INVERTIBLE_FLAG invertMatrix(const std::vector<std::vector<Type>> &inputMatrix, std::vector<std::vector<Type>> &resMatrix); // Обратная матрица
 
 template<typename Type>
-void transposeMatrix(std::vector<std::vector<Type>> &matrix);
+std::size_t transposeMatrix(std::vector<std::vector<Type>> &matrix);
 
 template<typename Type>
 Type findLowerBoundOfcond1(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, Type delta1 = 1e-1, Type delta2 = 1e-3, Type delta3 = 1e-6);
@@ -59,5 +59,11 @@ MULTIPLIED_FLAG multiplyMatrix(const std::vector<std::vector<Type>> &matrix1, co
 
 template<typename Type>
 MULTIPLIED_FLAG multiplyMatrix(const std::vector<std::vector<Type>> &matrix, const std::vector<Type> &vec, std::vector<Type> &result);
+
+template<typename Type>
+std::ostream& operator<<(std::ostream &os, const std::vector<std::vector<Type>> &matrix);
+
+template<typename Type>
+std::ostream& operator<<(std::ostream &os, const std::vector<Type> &vector);
 
 #endif
