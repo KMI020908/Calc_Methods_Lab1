@@ -19,7 +19,7 @@ SOLUTION_FLAG qrMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Type>
 Type accuracy = 1e-6);
 
 template<typename Type>
-void findQMatrix(std::vector<std::vector<Type>> &lCoefs, std::vector<std::vector<Type>> &Q, Type accuracy = 1e-6);
+QUADRATIC_FLAG findQMatrix(std::vector<std::vector<Type>> &lCoefs, std::vector<std::vector<Type>> &Q, Type accuracy = 1e-6);
 
 template<typename Type>
 Type findResidual(const std::vector<std::vector<Type>> &lCoefs, const std::vector<Type> &rCoefs, const std::vector<Type> &solution); // Найти невязку
@@ -28,13 +28,13 @@ template<typename Type>
 Type findMatrixNorm1(const std::vector<std::vector<Type>> &matrix); // Октаэдрическая норма матрицы
 
 template<typename Type>
-Type findCond_1(const std::vector<std::vector<Type>> &A); // Число обусловленности с октаэдоической метрикой
+Type findCond_1(const std::vector<std::vector<Type>> &matrix); // Число обусловленности с октаэдоической метрикой
 
 template<typename Type>
 Type findMatrixNormInf(const std::vector<std::vector<Type>> &matrix); // Кубическая норма матрицы
 
 template<typename Type>
-Type findCond_inf(const std::vector<std::vector<Type>> &A); // Число обусловленности с кубической метрикой
+Type findCond_inf(const std::vector<std::vector<Type>> &matrix); // Число обусловленности с кубической метрикой
 
 template<typename Type>
 Type norm1OfVector(const std::vector<Type> &vector); // Октаэдрическая нормам вектора

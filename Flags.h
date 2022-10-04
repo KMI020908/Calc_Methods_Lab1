@@ -16,4 +16,9 @@ enum INVERTIBLE_FLAG{
     IS_INVERTIBLE // 1
 };
 
+enum QUADRATIC_FLAG{
+    NOT_QUADRATIC, // 0
+    IS_QUADRATIC // 1
+};
+
 #endif 
