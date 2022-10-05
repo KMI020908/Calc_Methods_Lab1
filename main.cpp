@@ -9,7 +9,7 @@ void checkTest(std::vector<std::vector<Type>> &lCoefSys, std::vector<Type> &rCoe
 const std::string &IN_FILE_PATH, const std::string &G_OUT_FILE_PATH, const std::string &QR_OUT_FILE_PATH, Type perturbation = 0.01){
     readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
     std::vector<Type> solution;
-    SOLUTION_FLAG flag = gaussMethod<Type>(lCoefSys, rCoefSys, solution);
+    SOLUTION_FLAG flag = gaussMethodFull<Type>(lCoefSys, rCoefSys, solution);
     if (flag == HAS_SOLUTION){
         writeData<Type>(solution, G_OUT_FILE_PATH);
         readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH); 

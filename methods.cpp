@@ -40,7 +40,7 @@ SOLUTION_FLAG gaussMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Ty
             return NO_SOLUTION;
     }
     // Обратный ход Гаусса
-    for (std::int32_t i = rows - 1; i >= 0 ; i--){
+    for (int i = rows - 1; i >= 0 ; i--){
         Type sum = 0.0;
         for (std::size_t j = i + 1; j < cols; j++)
             sum += lCoefs[i][j] * solution[j]; 
@@ -113,13 +113,14 @@ SOLUTION_FLAG gaussMethodFull(std::vector<std::vector<Type>> &lCoefs, std::vecto
             return NO_SOLUTION;
     }
     // Обратный ход Гаусса
-    for (std::int32_t i = rows - 1; i >= 0 ; i--){
+    for (int i = rows - 1; i >= 0 ; i--){
         Type sum = 0.0;
         for (std::size_t j = i + 1; j < cols; j++)
             sum += lCoefs[i][j] * solution[j]; 
         solution[i] = (rCoefs[i] - sum)/lCoefs[i][i];
     }
-    for (std::int32_t i = switchCols.size() - 2; i >= 0; i -= 2){
+    // Обратная перестановка
+    for (int i = switchCols.size() - 2; i >= 0; i -= 2){
         Type temp = solution[switchCols[i]];
         solution[switchCols[i]] = solution[switchCols[i + 1]];
         solution[switchCols[i + 1]] = temp;
@@ -164,7 +165,7 @@ SOLUTION_FLAG qrMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Type>
     }
     
      // Обратный ход Гаусса
-    for (std::int32_t i = rows - 1; i >= 0 ; i--){
+    for (int i = rows - 1; i >= 0 ; i--){
         Type sum = 0.0;
         for (std::size_t j = i + 1; j < cols; j++)
             sum += lCoefs[i][j] * solution[j]; 
