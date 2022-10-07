@@ -21,7 +21,8 @@ template<typename Type>
 FILE_FLAG writeQRMatrix(const std::vector<std::vector<Type>> &Q, const std::vector<std::vector<Type>> &R, const std::string& OUT_FILE_PATH);
 
 template<typename Type>
-FILE_FLAG writeMatrixMultiply(const std::vector<std::vector<Type>> &B, const std::vector<std::vector<Type>> &A, const std::string& OUT_FILE_PATH);
+FILE_FLAG writeMatrixMultiplyInvA(const std::vector<std::vector<Type>> &B, const std::vector<std::vector<Type>> &A, const std::string& OUT_FILE_PATH, 
+const std::string &text = "");
 
 template<typename Type>
 FILE_FLAG writeResidual(Type residual, const std::string& OUT_FILE_PATH);

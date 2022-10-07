@@ -22,9 +22,12 @@ const std::string &IN_FILE_PATH, const std::string &G_OUT_FILE_PATH, const std::
         Type lowerBoundInf = findLowerBoundOfcondInf(lCoefSys, rCoefSys);
         writeLowerBounds<Type>(lowerBound1, lowerBoundInf, G_OUT_FILE_PATH);
         readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
-        std::vector<std::vector<Type>> invertlCoefSys;
-        invertMatrix<Type>(lCoefSys, invertlCoefSys);
-        writeMatrixMultiply<Type>(invertlCoefSys, lCoefSys, G_OUT_FILE_PATH);
+        std::vector<std::vector<Type>> invertlCoefSysGauss;
+        std::vector<std::vector<Type>> invertlCoefSysQR;
+        invertMatrix<Type>(lCoefSys, invertlCoefSysGauss, gaussMethod);
+        invertMatrix<Type>(lCoefSys, invertlCoefSysQR, qrMethod);
+        writeMatrixMultiplyInvA<Type>(invertlCoefSysGauss, lCoefSys, G_OUT_FILE_PATH, "with Gauss method");
+        writeMatrixMultiplyInvA<Type>(invertlCoefSysQR, lCoefSys, G_OUT_FILE_PATH, "with QR method");
         readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
         Type residual = findResidual<Type>(lCoefSys, rCoefSys, solution);
         writeResidual<Type>(residual, G_OUT_FILE_PATH);
@@ -59,6 +62,7 @@ const std::string &IN_FILE_PATH, const std::string &G_OUT_FILE_PATH, const std::
     if (flag == HAS_SOLUTION){
         writeData<Type>(solution, QR_OUT_FILE_PATH);
         writeQRMatrix<Type>(Q, lCoefSys, QR_OUT_FILE_PATH);
+        writeMatrixMultiplyQR(Q, lCoefSys, QR_OUT_FILE_PATH);
         readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
         Type cond_1 = findCond_1<Type>(lCoefSys);
         Type cond_inf = findCond_inf<Type>(lCoefSys);
@@ -68,9 +72,13 @@ const std::string &IN_FILE_PATH, const std::string &G_OUT_FILE_PATH, const std::
         readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
         Type lowerBoundInf = findLowerBoundOfcondInf(lCoefSys, rCoefSys);
         writeLowerBounds<Type>(lowerBound1, lowerBoundInf, QR_OUT_FILE_PATH);
-        std::vector<std::vector<Type>> invertlCoefSys;
-        invertMatrix<Type>(lCoefSys, invertlCoefSys);
-        writeMatrixMultiply<Type>(invertlCoefSys, lCoefSys, QR_OUT_FILE_PATH);
+        readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
+        std::vector<std::vector<Type>> invertlCoefSysGauss;
+        std::vector<std::vector<Type>> invertlCoefSysQR;
+        invertMatrix<Type>(lCoefSys, invertlCoefSysGauss, gaussMethod);
+        invertMatrix<Type>(lCoefSys, invertlCoefSysQR, qrMethod);
+        writeMatrixMultiplyInvA<Type>(invertlCoefSysGauss, lCoefSys, QR_OUT_FILE_PATH, "with Gauss method");
+        writeMatrixMultiplyInvA<Type>(invertlCoefSysQR, lCoefSys, QR_OUT_FILE_PATH, "with QR method");
         readData<Type>(lCoefSys, rCoefSys, IN_FILE_PATH);
         Type residual = findResidual<Type>(lCoefSys, rCoefSys, solution);
         writeResidual<Type>(residual, QR_OUT_FILE_PATH);
@@ -121,7 +129,7 @@ void temp_main(){
 }
 
 int main(){
-    temp_main<double>();
+    temp_main<float>();
 
     std::vector<std::vector<double>> A; // Матрица левых коэффициентов
     std::vector<double> b; // Вектор правых коэффициентов

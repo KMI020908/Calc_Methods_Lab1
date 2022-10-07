@@ -90,14 +90,40 @@ FILE_FLAG writeQRMatrix(const std::vector<std::vector<Type>> &Q, const std::vect
 }
 
 template<typename Type>
-FILE_FLAG writeMatrixMultiply(const std::vector<std::vector<Type>> &B, const std::vector<std::vector<Type>> &A, const std::string& OUT_FILE_PATH){
+FILE_FLAG writeMatrixMultiplyInvA(const std::vector<std::vector<Type>> &B, const std::vector<std::vector<Type>> &A, const std::string& OUT_FILE_PATH, 
+const std::string &text){
+    if (B.size() == 0 || A.size() == 0)
+        return NOT_OPEN;
     std::ofstream file;
 	file.open(OUT_FILE_PATH, std::ios::app);
 	if (!file.is_open())
 		exit(NOT_OPEN);
     std::size_t dimMatrix = A.size();
     file << '\n' << '\n';
-    file << "Multiplication of invert A and original A:" << '\n';
+    file << "Multiplication of invert A and original A " << text << ':' << '\n';
+    for (std::size_t i = 0; i < dimMatrix; i++){
+        for (std::size_t j = 0; j < dimMatrix; j++){
+            Type sum = 0;
+            for (std::size_t k = 0; k < dimMatrix; k++){
+                sum += B[i][k]*A[k][j];
+            }
+            file << sum << '\t';
+        }
+        file << '\n';
+    }
+    file.close();
+    return IS_CLOSED;
+} 
+
+template<typename Type>
+FILE_FLAG writeMatrixMultiplyQR(const std::vector<std::vector<Type>> &B, const std::vector<std::vector<Type>> &A, const std::string& OUT_FILE_PATH){
+    std::ofstream file;
+	file.open(OUT_FILE_PATH, std::ios::app);
+	if (!file.is_open())
+		exit(NOT_OPEN);
+    std::size_t dimMatrix = A.size();
+    file << '\n' << '\n';
+    file << "Multiplication of Q and R:" << '\n';
     for (std::size_t i = 0; i < dimMatrix; i++){
         for (std::size_t j = 0; j < dimMatrix; j++){
             Type sum = 0;

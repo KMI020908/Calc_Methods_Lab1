@@ -347,7 +347,8 @@ Type findCond_inf(const std::vector<std::vector<Type>> &matrix){
 }
 
 template<typename Type>
-INVERTIBLE_FLAG invertMatrix(const std::vector<std::vector<Type>> &inputMatrix, std::vector<std::vector<Type>> &resMatrix){
+INVERTIBLE_FLAG invertMatrix(const std::vector<std::vector<Type>> &inputMatrix, std::vector<std::vector<Type>> &resMatrix,
+    SOLUTION_FLAG (*method)(std::vector<std::vector<Type>> &, std::vector<Type>&, std::vector<Type>&, Type accuracy)){
     std::size_t rows = inputMatrix.size();
     std::size_t cols = 0;
     if (rows != 0)
@@ -370,7 +371,7 @@ INVERTIBLE_FLAG invertMatrix(const std::vector<std::vector<Type>> &inputMatrix, 
     SOLUTION_FLAG flag;
     for (std::size_t i = 0; i < rows; i++){
         tempMatrix = inputMatrix;
-        flag = gaussMethod<Type>(tempMatrix, E[i], solution);
+        flag = (*method)(tempMatrix, E[i], solution, 1e-6);
         if (flag == NO_SOLUTION){
             for (std::size_t i = 0; i < rows; i++)
                 resMatrix[i].clear();

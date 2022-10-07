@@ -43,7 +43,8 @@ template<typename Type>
 Type normInfOfVector(const std::vector<Type> &vector); // Кубическая норма вектора
 
 template<typename Type>
-INVERTIBLE_FLAG invertMatrix(const std::vector<std::vector<Type>> &inputMatrix, std::vector<std::vector<Type>> &resMatrix); // Обратная матрица
+INVERTIBLE_FLAG invertMatrix(const std::vector<std::vector<Type>> &inputMatrix, std::vector<std::vector<Type>> &resMatrix,
+    SOLUTION_FLAG (*method)(std::vector<std::vector<Type>>& matrix, std::vector<Type>& rVec, std::vector<Type>& sol, Type accuracy) = qrMethod); // Обратная матрица
 
 template<typename Type>
 std::size_t transposeMatrix(std::vector<std::vector<Type>> &matrix);
