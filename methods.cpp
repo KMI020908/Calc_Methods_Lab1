@@ -371,7 +371,7 @@ INVERTIBLE_FLAG invertMatrix(const std::vector<std::vector<Type>> &inputMatrix, 
     SOLUTION_FLAG flag;
     for (std::size_t i = 0; i < rows; i++){
         tempMatrix = inputMatrix;
-        flag = (*method)(tempMatrix, E[i], solution, 1e-6);
+        flag = (*method)(tempMatrix, E[i], solution, 1e-14);
         if (flag == NO_SOLUTION){
             for (std::size_t i = 0; i < rows; i++)
                 resMatrix[i].clear();

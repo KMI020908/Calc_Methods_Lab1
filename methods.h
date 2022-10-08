@@ -8,15 +8,15 @@
 
 template<typename Type>
 SOLUTION_FLAG gaussMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, std::vector<Type> &solution, 
-Type accuracy = 1e-6);
+Type accuracy = 1e-14);
 
 template<typename Type>
 SOLUTION_FLAG gaussMethodFull(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, std::vector<Type> &solution, 
-Type accuracy = 1e-6); // Метод Гаусса с полным выбором главного элемента
+Type accuracy = 1e-14); // Метод Гаусса с полным выбором главного элемента
 
 template<typename Type>
 SOLUTION_FLAG qrMethod(std::vector<std::vector<Type>> &lCoefs, std::vector<Type> &rCoefs, std::vector<Type> &solution, 
-Type accuracy = 1e-6);
+Type accuracy = 1e-14);
 
 template<typename Type>
 QUADRATIC_FLAG findQMatrix(std::vector<std::vector<Type>> &lCoefs, std::vector<std::vector<Type>> &Q, Type accuracy = 1e-6);

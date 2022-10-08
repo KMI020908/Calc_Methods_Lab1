@@ -129,12 +129,12 @@ void temp_main(){
 }
 
 int main(){
-    temp_main<float>();
+    temp_main<double>();
 
-    std::vector<std::vector<double>> A; // Матрица левых коэффициентов
-    std::vector<double> b; // Вектор правых коэффициентов
-    std::size_t dim = 37;
-    std::vector<double> tempVec;
+    std::vector<std::vector<float>> A; // Матрица левых коэффициентов
+    std::vector<float> b; // Вектор правых коэффициентов
+    std::size_t dim = 8;
+    std::vector<float> tempVec;
     for (size_t i = 1; i <= dim; i++){
         for (size_t j = 1; j <= dim; j++){
             tempVec.push_back(1.0/(i + j - 1));
@@ -147,8 +147,8 @@ int main(){
     }
 
     std::cout << "Числа обусловленности для плохого теста: " << findCond_1(A) << '\t' << findCond_inf(A) << '\n';
-    std::vector<double> X; // Решение
-    SOLUTION_FLAG flag = gaussMethod(A, b, X);
+    std::vector<float> X; // Решение
+    SOLUTION_FLAG flag = gaussMethod<float>(A, b, X, 1e-7);
     if (flag == NO_SOLUTION)
         std::cout << "Нет решения плохого теста" << '\n';
     else
